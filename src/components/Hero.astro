@@ -1,0 +1,689 @@
+---
+import { getImage } from 'astro:assets';
+import WaLink from './WaLink.astro';
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { badges, environments, patterns } from '../lib/data';
+import { badgeImages, environmentImages, patternImages } from '../lib/images';
+
+const heroBadges = badges.filter((b) => b.hero);
+const dots = await Promise.all(
+  patterns.map(async (p) => ({
+    ...p,
+    img: await getImage({ src: patternImages[p.slug]!, width: 96, height: 96, fit: 'cover', format: 'webp' }),
+  })),
+);
+const heroBadgeImgs = await Promise.all(
+  heroBadges.map(async (b) => ({
+    ...b,
+    img: await getImage({ src: badgeImages[b.id]!, width: 176, height: 176, format: 'webp' }),
+  })),
+);
+const plankSlugs = ['001-canyon-oak', '004-woodland-oak', '002-classic-oak', '003-pacific-oak'];
+const planks = await Promise.all(
+  plankSlugs.map((s) =>
+    getImage({ src: patternImages[s]!, width: 640, height: 100, fit: 'cover', format: 'webp', quality: 70 }),
+  ),
+);
+
+// Carrossel "abertura": a próxima foto abre num círculo a partir do clique (src/scripts/aperture.ts)
+const slideIds = [
+  'canyon-oak-xl-living',
+  'classic-oak-living',
+  'harmony-oak-hb-bedroom',
+  'pacific-oak-kitchen',
+  'woodland-oak-bedroom',
+  'silver-oak-lounge',
+];
+const widths = [640, 960, 1280, 1600, 1920, 2400];
+const slides = slideIds.map((id) => environments.find((e) => e.id === id)!);
+const [first, ...rest] = slides;
+// Celular: o hero é bem mais alto que largo e a foto em paisagem seria ampliada para cobrir a altura (fica
+// borrada). Ali entra um recorte vertical (1:2) feito da altura inteira da foto original.
+const PHONE = '(max-width: 639px)';
+const portrait = async (id: string, format: 'avif' | 'webp') => {
+  const crops = await Promise.all(
+    [560, 800].map((w) =>
+      getImage({
+        src: environmentImages[id]!,
+        width: w,
+        height: w * 2,
+        fit: 'cover',
+        format,
+        quality: format === 'avif' ? 56 : 64,
+      }),
+    ),
+  );
+  return crops.map((c, i) => `${c.src} ${[560, 800][i]}w`).join(', ');
+};
+// Tablet em pé: a foto em paisagem cobre a altura, então a largura pintada passa da tela
+const SIZES = '(orientation: portrait) 150vh, 100vw';
+const firstImg = {
+  phoneAvif: await portrait(first!.id, 'avif'),
+  phoneWebp: await portrait(first!.id, 'webp'),
+  avif: await getImage({ src: environmentImages[first!.id]!, widths, format: 'avif', quality: 72 }),
+  webp: await getImage({ src: environmentImages[first!.id]!, widths, format: 'webp', quality: 72 }),
+};
+const restImgs = await Promise.all(
+  rest.map(async (s) => ({
+    ...s,
+    phone: await portrait(s.id, 'webp'),
+    img: await getImage({ src: environmentImages[s.id]!, widths, format: 'webp', quality: 72 }),
+  })),
+);
+const pad2 = (n: number) => String(n).padStart(2, '0');
+---
+
+<section id="inicio" class="hero" data-section-id="hero" aria-labelledby="hero-title">
+  <div
+    class="stage"
+    data-aperture
+    data-autoplay="6500"
+    data-duration="1100"
+    data-captions={JSON.stringify(slides.map((s) => s.caption))}
+  >
+    <div
+      class="ap-slides"
+      role="group"
+      aria-roledescription="carrossel"
+      aria-label="Ambientes com piso Timberland"
+    >
+      <div class="ap-slide is-current">
+        <picture>
+          <source media={PHONE} type="image/avif" srcset={firstImg.phoneAvif} sizes="100vw" />
+          <source media={PHONE} type="image/webp" srcset={firstImg.phoneWebp} sizes="100vw" />
+          <source type="image/avif" srcset={firstImg.avif.srcSet.attribute} sizes={SIZES} />
+          <img
+            src={firstImg.webp.src}
+            srcset={firstImg.webp.srcSet.attribute}
+            sizes={SIZES}
+            alt={first!.alt}
+            width={environmentImages[first!.id]!.width}
+            height={environmentImages[first!.id]!.height}
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </picture>
+      </div>
+      {restImgs.map((s) => (
+        <div class="ap-slide">
+          <picture>
+            <source media={PHONE} data-srcset={s.phone} sizes="100vw" />
+            <img
+              data-srcset={s.img.srcSet.attribute}
+              data-src={s.img.src}
+              sizes={SIZES}
+              alt={s.alt}
+              decoding="async"
+            />
+          </picture>
+        </div>
+      ))}
+    </div>
+    <div class="ap-ring" aria-hidden="true"></div>
+    <div class="ap-shade" aria-hidden="true"></div>
+    <div class="ap-lens" aria-hidden="true">
+      Próximo
+    </div>
+
+    <div class="container stage-inner">
+      <div class="hero-copy">
+        <p class="eyebrow hero-eyebrow">Piso vinílico SPC</p>
+        <h1 id="hero-title">
+          <span class="rise hero-name">
+            <span>Timberland</span>
+          </span>
+          <span class="rise hero-tagline">
+            <span>Beleza natural com modernidade.</span>
+          </span>
+        </h1>
+        <p class="lead">
+          A resistência do SPC com o visual da madeira natural. À prova d'água, com base acústica incorporada
+          e sete padrões de carvalho para casas e projetos comerciais.
+        </p>
+        <ul class="facts" aria-label="Destaques">
+          <li>
+            <span>
+              <strong>3 formatos</strong> de régua
+            </span>
+          </li>
+          <li>
+            <span>
+              <strong>Instalação clic</strong>, sem cola
+            </span>
+          </li>
+        </ul>
+        <div class="actions">
+          <a class="btn btn--light" href="#cotacao" data-cta="quote" data-cta-id="quote_hero" data-loc="hero">
+            Solicitar cotação
+          </a>
+          <WaLink location="hero" class="btn btn--ghost" />
+        </div>
+        <div class="dots">
+          <ul aria-label="Os 7 padrões de carvalho">
+            {dots.map((d) => (
+              <li>
+                <a href="#padroes" data-pattern-link={d.id} title={`${d.code} ${d.name}`}>
+                  <img
+                    src={d.img.src}
+                    width="48"
+                    height="48"
+                    alt={`${d.code} ${d.name}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a href="#padroes" class="small dots-label">
+            Ver os 7 padrões
+          </a>
+        </div>
+        <Logo class="hero-logo" />
+      </div>
+
+      <div class="ap-bar">
+        <p class="ap-caption small" data-ap-live aria-live="off">
+          <span class="rise">
+            <span data-ap-caption>{first!.caption}</span>
+          </span>
+        </p>
+        <div class="ap-ctrl">
+          <span class="ap-count" aria-hidden="true">
+            <span data-ap-index>01</span> — {pad2(slides.length)}
+          </span>
+          <button type="button" class="ap-btn" data-ap-prev aria-label="Ambiente anterior">
+            <Icon name="prev" />
+          </button>
+          <button
+            type="button"
+            class="ap-btn"
+            data-ap-pause
+            aria-label="Pausar troca de ambientes"
+            aria-pressed="false"
+          >
+            <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path fill="none" stroke="currentColor" stroke-width="1.6" d="M9 5v14M15 5v14"></path>
+            </svg>
+            <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path fill="none" stroke="currentColor" stroke-width="1.6" d="M8 5v14l11-7Z"></path>
+            </svg>
+          </button>
+          <button type="button" class="ap-btn" data-ap-next aria-label="Próximo ambiente">
+            <Icon name="next" />
+          </button>
+        </div>
+        <div class="ap-track" aria-hidden="true">
+          <div class="ap-fill"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="floor" aria-hidden="true">
+      {planks.map((p, i) => (
+        <span class="plank" style={`--i:${i}`}>
+          <img src={p.src} width="640" height="100" alt="" decoding="async" />
+        </span>
+      ))}
+    </div>
+    <ul class="proof" aria-label="Garantias e certificações">
+      {heroBadgeImgs.map((b) => (
+        <li>
+          <img src={b.img.src} width="88" height="88" alt="" loading="lazy" decoding="async" />
+          <span>{b.label}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  }
+
+  /* Palco em tela cheia com as fotos dos ambientes */
+  .stage {
+    --ap-ink: #fff;
+    --ap-dur: 6500ms;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: #1a1716;
+    color: var(--ap-ink);
+    min-height: calc(100svh - 68px);
+    display: flex;
+    align-items: flex-end;
+    touch-action: pan-y;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .stage.lens-on {
+      cursor: none;
+    }
+  }
+  .ap-slides,
+  .ap-slide {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .ap-slide {
+    visibility: hidden;
+  }
+  .ap-slide.is-current {
+    visibility: visible;
+    z-index: 0;
+  }
+  .ap-slide.is-incoming {
+    visibility: visible;
+    z-index: 1;
+  }
+  .ap-slide :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+  }
+  .ap-ring {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    border-radius: 50%;
+    border: 1px solid var(--ap-ink);
+    pointer-events: none;
+    opacity: 0;
+  }
+  .ap-shade {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    /* No celular o texto ocupa quase todo o hero, até o alto da foto: a película cobre a altura toda */
+    background: linear-gradient(
+      to top,
+      rgba(20, 17, 16, 0.88) 0%,
+      rgba(20, 17, 16, 0.64) 48%,
+      rgba(20, 17, 16, 0.4) 78%,
+      rgba(20, 17, 16, 0.5) 100%
+    );
+  }
+  @media (min-width: 900px) {
+    .ap-shade {
+      background:
+        linear-gradient(90deg, rgba(20, 17, 16, 0.72) 0%, rgba(20, 17, 16, 0.4) 42%, rgba(20, 17, 16, 0) 68%),
+        linear-gradient(to top, rgba(20, 17, 16, 0.7) 0%, rgba(20, 17, 16, 0) 45%);
+    }
+  }
+  .ap-lens {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 4;
+    width: 76px;
+    height: 76px;
+    margin: -38px 0 0 -38px;
+    border-radius: 50%;
+    border: 1px solid var(--ap-ink);
+    display: grid;
+    place-items: center;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .stage.lens-on .ap-lens {
+    opacity: 1;
+  }
+
+  .stage-inner {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    gap: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+    padding-top: clamp(5rem, 18vh, 10rem);
+    padding-bottom: clamp(1.25rem, 1rem + 1.5vw, 2.25rem);
+  }
+  .hero-copy {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 62rem;
+  }
+  .hero-copy > :not(h1) {
+    max-width: 38rem;
+  }
+  .hero-copy h1 {
+    color: #fff;
+  }
+  .hero-copy :global(.hero-logo) {
+    justify-self: start;
+    height: clamp(26px, 1.6vw + 18px, 36px);
+    color: #fff;
+    margin-top: -0.25rem;
+  }
+  .hero-eyebrow {
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: -0.75rem;
+  }
+  /* Hierarquia: categoria (eyebrow) → nome do produto → assinatura da marca (CAT p.1) → texto de apoio */
+  .hero-name {
+    font-size: clamp(3.5rem, 1.6rem + 9vw, 10.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    padding-bottom: 0.12em;
+  }
+  .hero-tagline {
+    margin-top: clamp(0.25rem, 0.1rem + 0.6vw, 0.75rem);
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 3rem);
+    line-height: 1.08;
+    color: rgba(255, 255, 255, 0.94);
+  }
+  .hero-copy .lead {
+    color: rgba(255, 255, 255, 0.86);
+  }
+
+  /* Títulos que sobem de dentro de uma máscara */
+  .rise {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .rise > span {
+    display: block;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .rise > span {
+      animation: rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+    .hero-tagline > span {
+      animation-delay: 0.12s;
+    }
+    @keyframes rise {
+      from {
+        transform: translateY(105%);
+      }
+      to {
+        transform: none;
+      }
+    }
+  }
+
+  .facts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2.25rem;
+  }
+  /* Travessão colado ao texto (mesmo espaço em todos os itens) e mais ar entre um item e outro */
+  .facts li {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+  .facts li::before {
+    content: '';
+    flex: none;
+    width: 0.875em;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.7;
+  }
+
+  /* Botões em versão clara sobre a foto */
+  .btn--light {
+    background: #fff;
+    border-color: #fff;
+    color: var(--ink);
+  }
+  .btn--light:hover {
+    background: var(--paper);
+  }
+  .stage :global(.btn--ghost) {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.9);
+    color: #fff;
+  }
+  .stage :global(.btn--ghost:hover) {
+    background: #fff;
+    color: var(--ink);
+  }
+  .stage :focus-visible {
+    outline-color: #fff;
+  }
+
+  .dots {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .dots ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+  .dots li + li {
+    margin-left: -6px;
+  }
+  .dots ul a {
+    display: block;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+  }
+  .dots img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .dots ul a:hover,
+  .dots ul a:focus-visible {
+    position: relative;
+    z-index: 1;
+    transform: translateY(-2px);
+  }
+  .dots-label {
+    font-weight: 600;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+  }
+  .dots-label:hover {
+    text-decoration: underline;
+  }
+
+  /* Barra do carrossel: legenda, contador, controles e a linha de progresso */
+  .ap-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem 1rem;
+  }
+  .ap-caption {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.02em;
+  }
+  .ap-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .ap-count {
+    font:
+      500 0.75rem/1 ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      monospace;
+    letter-spacing: 0.14em;
+    margin-right: 0.5rem;
+    white-space: nowrap;
+  }
+  .ap-btn {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .ap-btn:hover {
+    border-color: #fff;
+  }
+  .ap-btn :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+  .ap-btn .i-play,
+  .ap-btn[aria-pressed='true'] .i-pause {
+    display: none;
+  }
+  .ap-btn[aria-pressed='true'] .i-play {
+    display: block;
+  }
+  .stage[data-static] [data-ap-pause] {
+    display: none;
+  }
+  .ap-track {
+    grid-column: 1 / -1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.28);
+  }
+  .ap-fill {
+    height: 100%;
+    background: var(--ap-ink);
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+  .ap-fill.run {
+    animation: ap-fill var(--ap-dur) linear forwards;
+  }
+  .stage[data-paused] .ap-fill {
+    animation-play-state: paused;
+  }
+  @keyframes ap-fill {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Réguas "encaixam" (clic) quando entram na tela */
+  .floor {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px;
+    overflow: clip;
+    overflow-clip-margin: 0;
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+  @media (min-width: 600px) {
+    .floor {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .floor {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .plank {
+    display: block;
+    aspect-ratio: 6.43 / 1;
+    overflow: hidden;
+    background: var(--stone);
+  }
+  .plank img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .plank:nth-child(n + 2) {
+    display: none;
+  }
+  @media (min-width: 600px) {
+    .plank:nth-child(2) {
+      display: block;
+    }
+  }
+  @media (min-width: 1024px) {
+    .plank:nth-child(n + 3) {
+      display: block;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .floor[data-wait] .plank {
+      opacity: 0;
+    }
+    .floor.in .plank {
+      animation: clic 0.7s cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
+      animation-delay: calc(0.1s + var(--i) * 0.12s);
+    }
+    @keyframes clic {
+      0% {
+        transform: translate(calc(18px + var(--i) * 10px), -10px) rotate(-1.2deg);
+        opacity: 0;
+      }
+      70% {
+        transform: translate(0, 0) rotate(0);
+        opacity: 1;
+      }
+      85% {
+        transform: translateX(-1px);
+      }
+      100% {
+        transform: none;
+        opacity: 1;
+      }
+    }
+  }
+  .proof {
+    list-style: none;
+    padding: 0;
+    margin: 1.75rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem clamp(0.75rem, 0.25rem + 2vw, 2rem);
+  }
+  .proof li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1.0625rem);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  @media (max-width: 639px) {
+    .proof li {
+      flex-direction: column;
+      text-align: center;
+      gap: 0.5rem;
+    }
+  }
+  .proof img {
+    width: clamp(60px, 44px + 3vw, 88px);
+    height: clamp(60px, 44px + 3vw, 88px);
+    flex: none;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+</style>

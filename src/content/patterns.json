@@ -1,0 +1,88 @@
+[
+  {
+    "id": "001",
+    "code": "001",
+    "name": "Canyon Oak",
+    "slug": "001-canyon-oak",
+    "formats": [
+      "padrao",
+      "xl"
+    ],
+    "skp": "https://www.belgotex.com.br/storage/colors/skp/01K893QNBAGVTQR3WHRKAN2D5C.skp",
+    "tone": "#9b8461",
+    "note": ""
+  },
+  {
+    "id": "002",
+    "code": "002",
+    "name": "Classic Oak",
+    "slug": "002-classic-oak",
+    "formats": [
+      "padrao",
+      "xl"
+    ],
+    "skp": "https://www.belgotex.com.br/storage/colors/skp/01K893QZ92EBJ9CZF7C5SFV7N6.skp",
+    "tone": "#a08c6c",
+    "note": "Em espinha de peixe, o mesmo tom se chama Serenity Oak."
+  },
+  {
+    "id": "003",
+    "code": "003",
+    "name": "Pacific Oak",
+    "slug": "003-pacific-oak",
+    "formats": [
+      "padrao"
+    ],
+    "skp": "https://www.belgotex.com.br/storage/colors/skp/01K893SQYGVDZ7MC09GYYNKBDH.skp",
+    "tone": "#5a4d3c",
+    "note": ""
+  },
+  {
+    "id": "004",
+    "code": "004",
+    "name": "Woodland Oak",
+    "slug": "004-woodland-oak",
+    "formats": [
+      "padrao"
+    ],
+    "skp": "https://www.belgotex.com.br/storage/colors/skp/01K893T37C8MAC2G84Y1DE96BD.skp",
+    "tone": "#a49077",
+    "note": "Em espinha de peixe, o mesmo tom se chama Harmony Oak."
+  },
+  {
+    "id": "005",
+    "code": "005",
+    "name": "Silver Oak",
+    "slug": "005-silver-oak",
+    "formats": [
+      "padrao"
+    ],
+    "skp": "https://www.belgotex.com.br/storage/colors/skp/01K893S9KXZ9BXQ3X4N9BZCE2F.skp",
+    "tone": "#bab3a8",
+    "note": ""
+  },
+  {
+    "id": "hb001",
+    "code": "HB 001",
+    "name": "Harmony Oak",
+    "slug": "hb-001-harmony-oak",
+    "formats": [
+      "hb"
+    ],
+    "skp": "https://www.belgotex.com.br/storage/colors/skp/01KJWKCR1NJ1QPNR7FEVYJTYV5.skp",
+    "tone": "#8f7e66",
+    "note": "Mesmo tom do 004 Woodland Oak."
+  },
+  {
+    "id": "hb002",
+    "code": "HB 002",
+    "name": "Serenity Oak",
+    "slug": "hb-002-serenity-oak",
+    "formats": [
+      "hb"
+    ],
+    "skp": "https://www.belgotex.com.br/storage/colors/skp/01KJWKD2HWTQ45ARWZG329JYCJ.skp",
+    "tone": "#9a8466",
+    "note": "Mesmo tom do 002 Classic Oak."
+  }
+]

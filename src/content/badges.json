@@ -1,0 +1,21 @@
+[
+  { "id": "garantia-lifetime", "label": "Garantia Lifetime (residencial)", "hero": true, "group": "garantia", "text": "Garantia vitalícia limitada para uso residencial, contra defeitos latentes de fabricação." },
+  { "id": "waterproof", "label": "100% Waterproof", "hero": true, "group": "desempenho", "text": "Núcleo SPC à prova d'água: a umidade do dia a dia não estraga o piso." },
+  { "id": "floorscore", "label": "FloorScore", "hero": true, "group": "certificacoes", "text": "Baixa emissão de compostos orgânicos voláteis, para um ar interno de qualidade." },
+  { "id": "iso-9001", "label": "Empresa certificada ISO 9001", "hero": false, "group": "certificacoes", "text": "Sistema de gestão da qualidade da Belgotex certificado." },
+  { "id": "iso-14001", "label": "Empresa certificada ISO 14001", "hero": false, "group": "certificacoes", "text": "Sistema de gestão ambiental da Belgotex certificado." },
+  { "id": "garantia-comercial", "label": "Garantia de 15 anos para uso comercial médio", "hero": false, "group": "garantia", "text": "Garantia de 15 anos para uso comercial médio." },
+  { "id": "uso-23", "label": "23 · Residencial pesado", "hero": false, "group": "desempenho", "text": "Quartos, lavabos, salas de estar e corredores." },
+  { "id": "uso-32", "label": "32 · Comercial médio", "hero": false, "group": "desempenho", "text": "Salas de aula, escritórios médios, quartos de hotel e pequenos comércios." },
+  { "id": "epd", "label": "EPD · Declaração Ambiental de Produto", "hero": false, "group": "certificacoes", "text": "Declaração Ambiental de Produto." },
+  { "id": "livre-ftalatos", "label": "Livre de ftalatos", "hero": false, "group": "certificacoes", "text": "Sem ftalatos na composição: ambientes mais saudáveis." },
+  { "id": "pur", "label": "Tratamento de superfície PUR", "hero": false, "group": "desempenho", "text": "Tratamento em poliuretano: mais resistência a arranhões e limpeza mais fácil." },
+  { "id": "ixpe", "label": "Base acústica IXPE", "hero": false, "group": "desempenho", "text": "Base acústica de 1 mm já incorporada à régua." },
+  { "id": "acustica", "label": "Isolamento do som ao impacto", "hero": false, "group": "desempenho", "text": "Reduz em 18 dB o ruído de impacto ao caminhar." },
+  { "id": "clic-angle-angle", "label": "Sistema clic angle‑angle", "hero": false, "group": "design", "text": "Encaixe angle‑angle sem cola: instalação flutuante, limpa e rápida." },
+  { "id": "design-ultrarrealistico", "label": "Design ultrarrealístico", "hero": false, "group": "design", "text": "Impressão em alta definição, com qualidade fotográfica." },
+  { "id": "eir", "label": "Textura sincronizada (Embossed in Register)", "hero": false, "group": "design", "text": "Relevo sincronizado com o desenho de cada veio da madeira." },
+  { "id": "menos-repeticao", "label": "Menos repetição: 24 réguas únicas", "hero": false, "group": "design", "text": "24 réguas diferentes por cor, para o desenho não se repetir." },
+  { "id": "excimer", "label": "Excimer Xtra Matte Finish", "hero": false, "group": "design", "text": "Acabamento fosco, sem reflexo, criado com luz ultravioleta." },
+  { "id": "pet-friendly", "label": "Pet-friendly", "hero": false, "group": "design", "text": "Resistente a arranhões e manchas, fácil de limpar." }
+]

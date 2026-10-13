@@ -1,0 +1,432 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import Icon from './Icon.astro';
+import { environments } from '../lib/data';
+import { environmentImages } from '../lib/images';
+
+const items = await Promise.all(
+  environments.map(async (env) => {
+    const src = environmentImages[env.id]!;
+    // fotos menores que 960 px (ex.: extraídas do catálogo) entram no tamanho original
+    const sizes = [960, 1600, 2400].filter((w) => w <= src.width);
+    if (!sizes.length) sizes.push(src.width);
+    const imgs = await Promise.all(
+      sizes.map((w) => getImage({ src, width: w, format: 'webp', quality: 76 })),
+    );
+    return {
+      ...env,
+      src,
+      full: imgs.map((im, i) => `${im.src} ${sizes[i]}w`).join(', '),
+      fullDefault: imgs[0]!.src,
+    };
+  }),
+);
+---
+
+<section
+  id="ambientes"
+  class="section section--sand"
+  data-section-id="gallery"
+  aria-labelledby="ambientes-title"
+>
+  <div class="container">
+    <div class="section-head">
+      <h2 id="ambientes-title">Ambientes e inspirações</h2>
+      <p class="lead">Da sala ao escritório: veja Timberland em casas e projetos comerciais.</p>
+    </div>
+    <div class="filters" role="group" aria-label="Filtrar ambientes">
+      <button type="button" aria-pressed="true" data-filter="todos">
+        Todos
+      </button>
+      <button type="button" aria-pressed="false" data-filter="residencial">
+        Residencial
+      </button>
+      <button type="button" aria-pressed="false" data-filter="comercial">
+        Comercial
+      </button>
+    </div>
+    <!--
+      Carrossel "visor": só a foto do visor fica aberta; as outras ficam dobradas de lado, como uma pilha
+      de bordas. Clicar numa borda abre aquela foto; clicar na foto aberta amplia (dialog abaixo).
+    -->
+    <div
+      class="vf"
+      data-gallery-root
+      role="region"
+      aria-roledescription="carrossel"
+      aria-label="Ambientes com piso Timberland"
+      tabindex="0"
+    >
+      <div class="vf-stage">
+        <ul class="vf-strip" data-gallery>
+          {items.map((it) => (
+            <li class="vf-slot" data-type={it.type}>
+              <div class="vf-holder">
+                <button
+                  type="button"
+                  class="vf-photo"
+                  data-full={it.full}
+                  data-full-default={it.fullDefault}
+                  data-caption={it.caption}
+                  data-alt={it.alt}
+                  aria-label={`Ampliar foto: ${it.caption}`}
+                >
+                  <Picture
+                    src={it.src}
+                    formats={['avif', 'webp']}
+                    widths={[320, 480, 720, 960].filter((w) => w <= it.src.width)}
+                    sizes="(min-width: 760px) 440px, 62vw"
+                    alt={it.alt}
+                    loading="lazy"
+                    quality={70}
+                  />
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div class="vf-frame" aria-hidden="true" data-vf-frame></div>
+      </div>
+      <p class="vf-title" aria-hidden="true">
+        <span data-vf-title></span>
+        <span class="vf-zoom">Toque na foto para ampliar</span>
+      </p>
+      <div class="vf-controls">
+        <button type="button" class="vf-btn" data-vf-prev aria-label="Ambiente anterior">
+          <Icon name="prev" />
+        </button>
+        <div class="vf-dots" data-vf-dots></div>
+        <span class="vf-count" aria-hidden="true" data-vf-count></span>
+        <button type="button" class="vf-btn" data-vf-next aria-label="Próximo ambiente">
+          <Icon name="next" />
+        </button>
+      </div>
+      <p class="sr-only" aria-live="polite" aria-atomic="true" data-vf-live></p>
+    </div>
+    <div class="actions after">
+      <a
+        class="btn btn--primary"
+        href="#cotacao"
+        data-cta="quote"
+        data-cta-id="quote_gallery"
+        data-loc="gallery"
+      >
+        Solicitar cotação
+      </a>
+    </div>
+  </div>
+
+  <dialog class="lightbox" data-lightbox aria-labelledby="lb-caption">
+    <div class="lb-inner">
+      <img data-lb-img alt="" sizes="(min-width: 1100px) 1040px, 94vw" />
+      <div class="lb-bar">
+        <p id="lb-caption" data-lb-caption></p>
+        <div class="lb-nav">
+          <button type="button" class="btn btn--secondary btn--sm" data-lb-prev aria-label="Foto anterior">
+            <Icon name="prev" />
+          </button>
+          <button type="button" class="btn btn--secondary btn--sm" data-lb-next aria-label="Próxima foto">
+            <Icon name="next" />
+          </button>
+          <button type="button" class="btn btn--primary btn--sm" data-lb-close>
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+</section>
+
+<style>
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .filters button {
+    min-height: 44px;
+    padding: 0 1.125rem;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .filters button[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  /* Carrossel visor */
+  .vf {
+    --vf-size: clamp(220px, 62vw, 440px); /* lado da foto quadrada */
+    --vf-fw: clamp(26px, 6vw, 60px); /* largura de uma foto dobrada na pilha */
+    --vf-ow: calc(var(--vf-size) * 1.36); /* largura ocupada pela foto aberta */
+    --vf-active: 0;
+    --vf-spring: 900ms ease-out;
+    --vf-fold: 800ms cubic-bezier(1, -0.03, 0.413, 0.965);
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 1.25rem;
+    padding: 2.25rem 0 0.5rem;
+    overflow: hidden;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    outline: none;
+  }
+  .vf:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--ink);
+  }
+  .vf-stage {
+    position: relative;
+    width: var(--vf-ow);
+    height: var(--vf-size);
+  }
+  .vf-strip {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    width: max-content;
+    transform: translateX(calc(var(--vf-fw) * var(--vf-active) * -1));
+    transition: transform var(--vf-spring);
+  }
+  .vf-slot {
+    perspective: 800px;
+  }
+  .vf-slot[hidden] {
+    display: none;
+  }
+  .vf-holder {
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    width: var(--vf-fw);
+    height: var(--vf-size);
+    will-change: transform;
+    transition:
+      width var(--vf-fold),
+      transform var(--vf-fold);
+  }
+  .vf-slot.is-active .vf-holder {
+    width: var(--vf-ow);
+  }
+  .vf-photo {
+    flex-shrink: 0;
+    display: block;
+    width: var(--vf-size);
+    height: var(--vf-size);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--stone);
+    cursor: pointer;
+    box-shadow: 0 18px 40px -24px rgba(35, 31, 32, 0.55);
+  }
+  .vf-slot.is-active .vf-photo {
+    cursor: zoom-in;
+  }
+  .vf-photo:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
+  .vf-photo :global(picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .vf-photo :global(img) {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    pointer-events: none;
+  }
+  .vf-frame {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: calc(var(--vf-size) + 16px);
+    height: calc(var(--vf-size) + 16px);
+    border: 1.5px solid var(--ink);
+    border-radius: 10px;
+    pointer-events: none;
+  }
+  .vf-frame.pulse {
+    animation: vf-pulse 800ms ease-in-out;
+  }
+  @keyframes vf-pulse {
+    50% {
+      transform: scale(1.06);
+    }
+  }
+  .vf-title {
+    margin: 0.5rem 0 0;
+    display: grid;
+    justify-items: center;
+    gap: 0.15rem;
+    text-align: center;
+    min-height: 3rem;
+  }
+  .vf-title [data-vf-title] {
+    font-weight: 600;
+    animation: vf-in 0.35s ease-out;
+  }
+  .vf-zoom {
+    font-size: 0.8125rem;
+    color: var(--ink-2);
+  }
+  @keyframes vf-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+  .vf-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0.375rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(4px);
+  }
+  .vf-btn {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      opacity 0.2s,
+      transform 0.2s;
+  }
+  .vf-btn :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+  .vf-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+  .vf-btn:not(:disabled):active {
+    transform: scale(0.88);
+  }
+  .vf-dots {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .vf-count {
+    display: none;
+    min-width: 4.5rem;
+    text-align: center;
+    font-size: var(--fs-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  /* No celular os 11 pontos não cabem: vira contador */
+  @media (max-width: 479px) {
+    .vf-dots {
+      display: none;
+    }
+    .vf-count {
+      display: block;
+    }
+  }
+  .vf-dots :global(button) {
+    position: relative;
+    width: 24px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .vf-dots :global(button)::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--ink);
+    opacity: 0.3;
+    transform: translate(-50%, -50%);
+    transition:
+      width 0.3s,
+      opacity 0.3s;
+  }
+  .vf-dots :global(button[aria-current='true']) {
+    width: 36px;
+  }
+  .vf-dots :global(button[aria-current='true'])::before {
+    width: 26px;
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .vf-strip,
+    .vf-holder {
+      transition: none !important;
+    }
+    .vf-frame.pulse,
+    .vf-title [data-vf-title] {
+      animation: none;
+    }
+  }
+  .after {
+    margin-top: 2.5rem;
+  }
+  .lightbox {
+    border: 0;
+    padding: 0;
+    background: var(--paper);
+    max-width: min(1100px, 94vw);
+    width: 100%;
+    max-height: 94vh;
+  }
+  .lightbox::backdrop {
+    background: rgb(20 18 17 / 0.82);
+  }
+  .lb-inner {
+    padding: 12px;
+    display: grid;
+    gap: 12px;
+  }
+  .lb-inner img {
+    width: 100%;
+    max-height: calc(94vh - 110px);
+    object-fit: contain;
+    background: var(--sand);
+  }
+  .lb-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .lb-nav {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .lb-nav :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+</style>
+
+<script>
+  import { initGallery } from '../scripts/gallery';
+  initGallery();
+</script>

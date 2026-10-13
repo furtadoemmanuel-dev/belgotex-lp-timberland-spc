@@ -1,0 +1,9 @@
+[
+  { "id": "spc", "value": "SPC", "title": "Núcleo mineral rígido", "text": "Estabilidade do núcleo SPC com a elegância do piso vinílico de luxo. Resiste a arranhões e à umidade." },
+  { "id": "agua", "value": "100%", "title": "À prova d'água", "text": "A composição em PVC do SPC mantém o piso bonito no dia a dia." },
+  { "id": "clic", "value": "Clic", "title": "Encaixe sem cola", "text": "Sistema angle-angle: instalação limpa e até 30% mais rápida que a de LVTs tradicionais." },
+  { "id": "acustica", "value": "Δ 18 dB", "title": "Base acústica IXPE", "text": "Reduz o ruído de impacto e deixa o piso mais confortável ao caminhar." },
+  { "id": "espessura", "value": "5–6,5 mm", "title": "Espessura total", "text": "Réguas padrão e HB: 5 mm, com 4 mm de piso mais 1 mm de base acústica IXPE incorporada. Grande formato (XL): 6,5 mm, com 5,5 mm de piso mais 1 mm de IXPE." },
+  { "id": "uso", "value": "23 · 32", "title": "Classificação de uso", "text": "Residencial pesado e comercial médio. Em casa: quartos, lavabos, salas de estar e corredores. Em projetos comerciais: salas de aula, escritórios médios, quartos de hotel e pequenos comércios. O grande formato (XL) tem classificação 23 · 33." },
+  { "id": "garantia", "value": "Lifetime", "title": "Garantia vitalícia", "text": "Garantia vitalícia limitada para uso residencial e de 15 anos para uso comercial médio, contra defeitos latentes de fabricação, a partir da data da compra." }
+]

@@ -1,0 +1,328 @@
+---
+// Rodapé no modelo do belgotex.com.br: logo + endereço + redes, colunas de links e o aviso "Importante".
+// No lugar da newsletter do site entra a chamada de cotação (a LP não coleta e-mail para newsletter).
+import Logo from './Logo.astro';
+import WaLink from './WaLink.astro';
+import { config } from '../config';
+import facebook from '@tabler/icons/outline/brand-facebook.svg?raw';
+import instagram from '@tabler/icons/outline/brand-instagram.svg?raw';
+import linkedin from '@tabler/icons/outline/brand-linkedin.svg?raw';
+import youtube from '@tabler/icons/outline/brand-youtube.svg?raw';
+import pinterest from '@tabler/icons/outline/brand-pinterest.svg?raw';
+import phoneIcon from '@tabler/icons/outline/phone.svg?raw';
+import mailIcon from '@tabler/icons/outline/mail.svg?raw';
+
+const icon = (raw: string) =>
+  raw.replace(/\sclass="[^"]*"/, '').replace('<svg ', '<svg aria-hidden="true" focusable="false" ');
+const year = new Date().getFullYear();
+const site = config.mainSiteUrl.replace(/\/$/, '');
+const social = [
+  { label: 'Facebook', url: 'https://www.facebook.com/belgotexdobrasil', svg: facebook },
+  { label: 'Instagram', url: 'https://www.instagram.com/belgotexdobrasil/', svg: instagram },
+  { label: 'LinkedIn', url: 'https://br.linkedin.com/company/belgotex-do-brasil', svg: linkedin },
+  { label: 'YouTube', url: 'https://www.youtube.com/channel/UCvy16AJJasAW9kAwxg3Usjw', svg: youtube },
+  { label: 'Pinterest', url: 'https://br.pinterest.com/belgotexdobrasil', svg: pinterest },
+];
+const info = [
+  { label: 'Sobre nós', url: `${site}/quem-somos` },
+  { label: 'Trabalhe conosco', url: `${site}/trabalhe-conosco` },
+  { label: 'Entre em contato', url: `${site}/contato` },
+  { label: 'Sustentabilidade', url: 'https://blife.belgotex.com.br/' },
+];
+const policies = [
+  { label: 'Política de Privacidade', url: config.privacyUrl },
+  { label: 'Política de Cookies', url: config.cookiesUrl },
+  { label: 'Código de Ética', url: `${site}/codigo-de-etica` },
+];
+---
+
+<footer class="footer" data-section-id="footer">
+  <div class="container top">
+    <div class="f-brand">
+      <a href={config.mainSiteUrl} class="f-logo-link" target="_blank" rel="noopener">
+        <Logo class="f-logo" />
+        <span class="sr-only">Belgotex do Brasil, site oficial (abre em nova aba)</span>
+      </a>
+      <p class="f-address">
+        Belgotex do Brasil Indústria de Carpetes LTDA.
+        <br />
+        CNPJ: 02.305.606/0001-60
+      </p>
+      <p class="f-address">
+        CEP: 84043-737 | Avenida José Carlos Gomes
+        <br />
+        Ponta Grossa - PR | Brasil
+      </p>
+      <ul class="social" aria-label="Redes sociais da Belgotex">
+        {social.map((s) => (
+          <li>
+            <a href={s.url} target="_blank" rel="noopener" aria-label={`${s.label} (abre em nova aba)`}>
+              <Fragment set:html={icon(s.svg)} />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="f-cta">
+      <h2 class="f-title">Cotação Timberland</h2>
+      <p class="f-text">Receba sua cotação e amostras dos padrões que combinam com o seu projeto.</p>
+      <a class="btn f-btn" href="#cotacao" data-cta="quote" data-cta-id="quote_footer" data-loc="footer">
+        Solicitar cotação
+      </a>
+      <WaLink location="footer" class="btn f-btn f-btn--ghost" />
+    </div>
+  </div>
+
+  <div class="container cols">
+    <nav class="f-col" aria-labelledby="f-info">
+      <h2 class="f-title" id="f-info">
+        Informações
+      </h2>
+      <ul>
+        {info.map((l) => (
+          <li>
+            <a href={l.url} target="_blank" rel="noopener">
+              {l.label}
+              <span class="sr-only"> (abre em nova aba)</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <nav class="f-col" aria-labelledby="f-policies">
+      <h2 class="f-title" id="f-policies">
+        Políticas de uso
+      </h2>
+      <ul>
+        {policies.map((l) => (
+          <li>
+            <a href={l.url} target="_blank" rel="noopener">
+              {l.label}
+              <span class="sr-only"> (abre em nova aba)</span>
+            </a>
+          </li>
+        ))}
+        <li>
+          <button type="button" class="linklike" data-consent-reopen>
+            Preferências de cookies
+          </button>
+        </li>
+      </ul>
+    </nav>
+    <div class="f-col">
+      <h2 class="f-title">Contatos</h2>
+      <ul>
+        <li>
+          <a href="tel:+554221011000" class="with-icon">
+            <Fragment set:html={icon(phoneIcon)} />
+            (42) 2101-1000
+          </a>
+        </li>
+        <li>
+          <a href="mailto:contato@belgotex.com.br" class="with-icon">
+            <Fragment set:html={icon(mailIcon)} />
+            contato@belgotex.com.br
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="legal">
+    <div class="container">
+      <p class="legal-title">Importante.</p>
+      <p>
+        Devido à diferença das telas, monitores, TVs e dos sistemas operacionais dos computadores, não
+        garantimos que a cor dos produtos seja uma verdadeira indicação do produto acabado. As cores e
+        texturas apresentadas podem ser diferentes do produto real. Recomendamos a visualização de uma amostra
+        física para obter uma verdadeira indicação da cor: solicite a sua pelo formulário desta página. As
+        especificações técnicas podem variar dentro das tolerâncias normais de fabricação, sem afetar a
+        qualidade e o desempenho.
+      </p>
+      <p class="copy">© {year} Belgotex do Brasil. Todos os direitos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--slate);
+    color: #c2c6cc;
+    font-size: var(--fs-sm);
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+  }
+  @media (min-width: 768px) {
+    .footer {
+      padding-bottom: 0;
+    }
+  }
+  .top,
+  .cols {
+    display: grid;
+    gap: 2.5rem;
+    padding-block: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+  }
+  .cols {
+    padding-top: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+  @media (min-width: 600px) {
+    .cols {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 900px) {
+    .top {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+    .cols {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding-left: 12%;
+    }
+  }
+
+  .f-brand {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+  }
+  .f-logo-link {
+    display: inline-block;
+    width: max-content;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+  .f-logo-link :global(.f-logo) {
+    height: 36px;
+  }
+  .f-address {
+    line-height: 1.8;
+    max-width: none;
+  }
+
+  .social {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 0.25rem;
+    margin-left: -10px;
+  }
+  .social a {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    border-radius: 50%;
+  }
+  .social a:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .social :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+
+  .f-cta {
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+    max-width: 26rem;
+  }
+  .f-text {
+    color: #cfd3d9;
+    margin-bottom: 0.5rem;
+  }
+  .f-btn {
+    width: 100%;
+    background: transparent;
+    border: 2px solid #fff;
+    border-radius: 6px;
+    color: #fff;
+    min-height: 48px;
+  }
+  .f-btn:hover {
+    background: #fff;
+    color: var(--slate);
+  }
+  .footer :global(.f-btn) {
+    font-size: 0.9375rem;
+  }
+  .footer :global(.f-btn--ghost) {
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .f-title {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: 0;
+    margin-bottom: 0.5rem;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+  a,
+  .linklike {
+    color: #c2c6cc;
+    text-decoration: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--fs-sm);
+  }
+  a:hover,
+  .linklike:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+  .with-icon {
+    gap: 0.5rem;
+  }
+  .with-icon :global(svg) {
+    width: 16px;
+    height: 16px;
+    color: #fff;
+  }
+  .linklike {
+    text-align: left;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .footer :focus-visible {
+    outline-color: #fff;
+  }
+
+  .legal {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-block: 2rem;
+    text-align: center;
+    color: #cfd3d9;
+    font-size: 0.8125rem;
+    line-height: 1.8;
+  }
+  .legal p {
+    max-width: 62rem;
+    margin-inline: auto;
+  }
+  .legal-title {
+    font-weight: 700;
+    font-size: var(--fs-sm);
+    color: #c2c6cc;
+  }
+  .copy {
+    margin-top: 1rem;
+    color: #a9aeb6;
+  }
+</style>

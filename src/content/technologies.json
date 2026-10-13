@@ -1,0 +1,10 @@
+[
+  { "id": "eir", "title": "Textura sincronizada (EIR)", "text": "Estampa e relevo combinados de forma contínua: o toque acompanha o desenho da madeira." },
+  { "id": "excimer", "title": "Excimer Xtra Matte", "text": "Acabamento fosco criado por luz ultravioleta, com textura mais realista e sem reflexo." },
+  { "id": "purecoat", "title": "PureCoat UV · PUR", "text": "Tratamento de superfície em poliuretano que facilita a limpeza e protege contra arranhões." },
+  { "id": "repeticao", "title": "24 réguas únicas por cor", "text": "Menos repetição: o piso fica com aparência natural, como madeira de verdade." },
+  { "id": "hd", "title": "Impressão de alta definição", "text": "Qualidade fotográfica, superior à impressão convencional: o desenho da madeira é reproduzido de forma extremamente realista." },
+  { "id": "ar", "title": "Qualidade do ar interno", "text": "O selo FloorScore garante baixa emissão de compostos orgânicos voláteis, o que contribui para a boa qualidade do ar dentro de casa." },
+  { "id": "ftalatos", "title": "Livre de ftalatos", "text": "Ar interior mais saudável e menos demanda por materiais potencialmente nocivos ao meio ambiente." },
+  { "id": "pets", "title": "Crianças e pets", "text": "Superfície robusta, resistente a arranhões e manchas e fácil de limpar." }
+]

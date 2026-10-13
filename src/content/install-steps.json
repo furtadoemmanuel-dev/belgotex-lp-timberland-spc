@@ -1,0 +1,7 @@
+[
+  { "id": "aclimatacao", "title": "Aclimatação", "text": "As caixas descansam 24 horas no ambiente antes da instalação." },
+  { "id": "encaixe", "title": "Encaixe angle‑angle", "text": "Régua com régua, sem cola, sem cheiro e sem resíduos." },
+  { "id": "ashlar", "title": "Paginação Ashlar", "text": "Método indicado pela Belgotex: siga as setas impressas no verso de cada régua." },
+  { "id": "flutuante", "title": "Instalação flutuante", "text": "O piso não é colado ao contrapiso e pode ser desmontado, régua por régua." },
+  { "id": "pronto", "title": "Pronto para usar", "text": "Sem tempo de cura: o ambiente volta a ser usado assim que a instalação termina." }
+]

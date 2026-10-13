@@ -1,0 +1,111 @@
+---
+// Tipografia do B_life (blife.belgotex.com.br): DM Serif Display nos títulos, DM Sans no texto
+import '@fontsource-variable/dm-sans/wght.css';
+import '@fontsource/dm-serif-display/400.css';
+import '@fontsource/dm-serif-display/400-italic.css';
+import serifLatin from '@fontsource/dm-serif-display/files/dm-serif-display-latin-400-normal.woff2?url';
+import sansLatin from '@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2?url';
+import '../styles/global.css';
+import { getImage } from 'astro:assets';
+import { config } from '../config';
+import { patterns } from '../lib/data';
+import ogSource from '../assets/environments/canyon-oak-xl-living.jpg';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, config.siteUrl).href;
+const og = await getImage({
+  src: ogSource,
+  width: 1200,
+  height: 630,
+  fit: 'cover',
+  format: 'jpg',
+  quality: 82,
+});
+const ogUrl = new URL(og.src, config.siteUrl).href;
+
+const productLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Timberland SPC',
+  description,
+  brand: { '@type': 'Brand', name: 'Belgotex' },
+  manufacturer: { '@type': 'Organization', name: 'Belgotex do Brasil', url: config.mainSiteUrl },
+  category: 'Piso vinílico rígido SPC',
+  image: ogUrl,
+  url: canonical,
+  material: 'SPC (Stone Plastic Composite) com base acústica IXPE',
+  additionalProperty: [
+    {
+      '@type': 'PropertyValue',
+      name: 'Espessura total',
+      value: '5 mm (4 mm + 1 mm IXPE); XL: 6,5 mm (5,5 mm + 1 mm IXPE)',
+    },
+    {
+      '@type': 'PropertyValue',
+      name: 'Classificação de uso',
+      value: '23 residencial pesado, 32 comercial médio; XL: 23 e 33',
+    },
+    {
+      '@type': 'PropertyValue',
+      name: 'Formatos',
+      value: '123,5 × 19,2 cm; 71 × 14,2 cm (HB); 184,2 × 23 cm (XL)',
+    },
+  ],
+  color: patterns.map((p) => p.name).join(', '),
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {config.noindex && <meta name="robots" content="noindex, nofollow" />}
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={serifLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={sansLatin} as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#f5f5f4" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="Belgotex do Brasil" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(productLd)} />
+    <!-- Consent Mode v2: tudo negado por padrão. O GTM só é carregado depois do aceite (src/scripts/consent.ts). -->
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      // O Consent Mode exige o objeto arguments (não um array)
+      function gtag() {
+        // eslint-disable-next-line prefer-rest-params
+        window.dataLayer.push(arguments);
+      }
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'granted',
+        security_storage: 'granted',
+        wait_for_update: 500,
+      });
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">
+      Pular para o conteúdo
+    </a>
+    <slot />
+  </body>
+</html>

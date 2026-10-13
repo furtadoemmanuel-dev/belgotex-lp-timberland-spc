@@ -1,0 +1,14 @@
+[
+  { "id": "canyon-oak-xl-living", "pattern": "001", "format": "xl", "type": "residencial", "alt": "Sala de estar clara com sofá cinza e piso de réguas longas em tom de carvalho dourado", "caption": "Canyon Oak · grande formato" },
+  { "id": "classic-oak-living", "pattern": "002", "format": "", "type": "residencial", "alt": "Estar integrado com parede de vidro voltada para a piscina e piso de carvalho claro", "caption": "Classic Oak" },
+  { "id": "classic-oak-xl-kitchen", "pattern": "002", "format": "xl", "type": "residencial", "alt": "Cozinha branca com ilha de madeira, banquetas e piso de réguas longas em carvalho claro", "caption": "Classic Oak · grande formato" },
+  { "id": "harmony-oak-hb-bedroom", "pattern": "hb001", "format": "hb", "type": "residencial", "alt": "Quarto com cama de linho cinza sobre piso em espinha de peixe", "caption": "Harmony Oak · espinha de peixe" },
+  { "id": "canyon-oak-office", "pattern": "001", "format": "", "type": "comercial", "alt": "Escritório aberto com estações de trabalho e piso de madeira em tom dourado", "caption": "Canyon Oak · escritório" },
+  { "id": "pacific-oak-kitchen", "pattern": "003", "format": "", "type": "residencial", "alt": "Cozinha e sala de jantar integradas com piso de carvalho escuro", "caption": "Pacific Oak" },
+  { "id": "serenity-oak-hb-kids", "pattern": "hb002", "format": "hb", "type": "residencial", "alt": "Quarto infantil com cabana branca sobre piso em espinha de peixe", "caption": "Serenity Oak · espinha de peixe" },
+  { "id": "silver-oak-lounge", "pattern": "005", "format": "", "type": "comercial", "alt": "Área de convivência com sofás verde e azul sobre piso de carvalho acinzentado", "caption": "Silver Oak · área de convivência" },
+  { "id": "woodland-oak-bedroom", "pattern": "004", "format": "", "type": "residencial", "alt": "Quarto com cabeceira de painel branco e piso de carvalho natural", "caption": "Woodland Oak" },
+  { "id": "pacific-oak-hall", "pattern": "003", "format": "", "type": "residencial", "alt": "Hall com escada e jardim interno com árvore, piso de carvalho escuro", "caption": "Pacific Oak · hall" },
+  { "id": "silver-oak-living", "pattern": "005", "format": "", "type": "residencial", "alt": "Sala com sofá bege e mesa de centro sobre piso de carvalho acinzentado", "caption": "Silver Oak" },
+  { "id": "serenity-oak-hb-detail", "pattern": "hb002", "format": "hb", "type": "residencial", "alt": "Detalhe do piso em espinha de peixe mostrando os veios e a textura das réguas", "caption": "Serenity Oak · detalhe" }
+]

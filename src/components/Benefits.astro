@@ -1,0 +1,301 @@
+---
+import { getImage } from 'astro:assets';
+import { benefits, technologies } from '../lib/data';
+import acusticaImg from '../assets/benefits/acustica.jpg';
+import garantiaImg from '../assets/benefits/garantia.jpg';
+import arImg from '../assets/benefits/ar.jpg';
+import petsImg from '../assets/benefits/pets.jpg';
+
+// EIR, Excimer e PureCoat são explicados na anatomia da régua (Layers.astro).
+// Os demais itens técnicos entram como cards, com um destaque curto no lugar do número.
+const extraValue: Record<string, string> = {
+  repeticao: '24',
+  hd: 'HD',
+  ar: 'FloorScore',
+  ftalatos: 'Livre',
+  pets: 'Pets',
+};
+const extraTitle: Record<string, string> = { repeticao: 'Réguas únicas por cor', ftalatos: 'de ftalatos' };
+// Fotos do catálogo do fabricante (cat_timberland.pdf, p. 16, 19, 24 e 27), mostradas ao abrir o card
+const photoSrc = {
+  acustica: { src: acusticaImg, alt: 'Mulher relaxando no sofá, num ambiente silencioso' },
+  garantia: { src: garantiaImg, alt: 'Família reunida num abraço' },
+  ar: { src: arImg, alt: 'Menina regando uma planta dentro de casa' },
+  pets: { src: petsImg, alt: 'Menino abraçado ao seu cachorro' },
+} as const;
+const photos = Object.fromEntries(
+  await Promise.all(
+    Object.entries(photoSrc).map(async ([id, p]) => [
+      id,
+      {
+        alt: p.alt,
+        img: await getImage({
+          src: p.src,
+          width: 720,
+          height: 405,
+          fit: 'cover',
+          format: 'webp',
+          quality: 74,
+        }),
+      },
+    ]),
+  ),
+) as Record<string, { alt: string; img: Awaited<ReturnType<typeof getImage>> } | undefined>;
+const cards = [
+  ...benefits.map((b) => ({ id: b.id, value: b.value, title: b.title, text: b.text })),
+  ...technologies
+    .filter((t) => t.id in extraValue)
+    .map((t) => ({ id: t.id, value: extraValue[t.id]!, title: extraTitle[t.id] ?? t.title, text: t.text })),
+].map((c) => ({ ...c, photo: photos[c.id] }));
+---
+
+<section id="beneficios" class="section" data-section-id="benefits" aria-labelledby="beneficios-title">
+  <div class="container">
+    <div class="section-head">
+      <h2 id="beneficios-title">Feito para a rotina pesada, com o toque natural da madeira</h2>
+      <p class="lead">
+        O SPC combina a estabilidade de um núcleo mineral rígido com a elegância do piso vinílico de luxo. É a
+        nova geração do LVT.
+      </p>
+    </div>
+
+    <ul class="cards">
+      {cards.map((c, i) => (
+        <li style={`--i:${i}`}>
+          <details class="card" data-benefit={c.id}>
+            <summary>
+              <span class="value">{c.value}</span>
+              <span class="title">{c.title}</span>
+              <span class="toggle" aria-hidden="true" />
+            </summary>
+            {c.photo && (
+              <img
+                class="photo"
+                src={c.photo.img.src}
+                width="720"
+                height="405"
+                alt={c.photo.alt}
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+            <p class="text">{c.text}</p>
+          </details>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+  @media (min-width: 640px) {
+    .cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+  }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    transition:
+      border-color 0.25s ease,
+      box-shadow 0.25s ease,
+      transform 0.25s ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover {
+      border-color: var(--cool-6);
+      box-shadow: 0 12px 24px -18px rgba(35, 31, 32, 0.45);
+    }
+    .card:hover .toggle {
+      border-color: var(--ink);
+    }
+  }
+  .card[open] {
+    border-color: var(--ink);
+    box-shadow: 0 16px 32px -22px rgba(35, 31, 32, 0.55);
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'value toggle'
+      'title toggle';
+    align-items: center;
+    column-gap: 1rem;
+    row-gap: 0.15rem;
+    padding: 1.25rem 1.25rem 1.15rem;
+    min-height: 44px;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  @media (max-width: 639px) {
+    summary {
+      padding: 0.9rem 1rem;
+    }
+    .text {
+      padding: 0 1rem 1rem !important;
+    }
+  }
+  summary:focus-visible {
+    outline-offset: -3px;
+  }
+  .value {
+    grid-area: value;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .title {
+    grid-area: title;
+    font-weight: 600;
+  }
+  /* "+" que gira para "×" ao abrir */
+  .toggle {
+    grid-area: toggle;
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    transition:
+      transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      background-color 0.25s,
+      border-color 0.25s;
+  }
+  .toggle::before,
+  .toggle::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 12px;
+    height: 1.5px;
+    background: var(--ink);
+    transform: translate(-50%, -50%);
+    transition: background-color 0.25s;
+  }
+  .toggle::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+  .card[open] .toggle {
+    transform: rotate(45deg);
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .card[open] .toggle::before,
+  .card[open] .toggle::after {
+    background: var(--paper);
+  }
+
+  .text {
+    margin: 0;
+    padding: 0 1.25rem 1.25rem;
+    color: var(--ink-2);
+  }
+  .photo {
+    display: block;
+    width: calc(100% - 2.5rem);
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    margin: 0 1.25rem 1rem;
+    border-radius: 2px;
+    background: var(--sand);
+  }
+  @media (max-width: 639px) {
+    .photo {
+      width: calc(100% - 2rem);
+      margin: 0 1rem 0.875rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* Abertura suave do conteúdo (navegadores sem suporte simplesmente abrem) */
+    .card::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition:
+        block-size 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+        content-visibility 0.4s allow-discrete;
+    }
+    .card[open]::details-content {
+      block-size: auto;
+      block-size: calc-size(auto, size);
+    }
+    .card[open] .text {
+      animation: text-in 0.45s ease 0.08s both;
+    }
+    .card[open] .photo {
+      animation: photo-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+    @keyframes photo-in {
+      from {
+        clip-path: inset(0 0 100% 0);
+      }
+      to {
+        clip-path: inset(0);
+      }
+    }
+    @keyframes text-in {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+    }
+    /* Entrada dos cards em sequência quando a seção aparece (só deslize: o texto nunca perde contraste) */
+    .cards[data-wait] li {
+      transform: translateY(18px);
+    }
+    .cards li {
+      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition-delay: calc(var(--i) * 50ms);
+    }
+  }
+</style>
+
+<script>
+  import { track } from '../scripts/analytics';
+
+  const list = document.querySelector<HTMLElement>('#beneficios .cards');
+  if (list) {
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e!.isIntersecting) {
+          list.dataset.wait = '';
+          return;
+        }
+        delete list.dataset.wait;
+        io.disconnect();
+      },
+      { threshold: 0.15 },
+    );
+    io.observe(list);
+    list.querySelectorAll<HTMLDetailsElement>('details[data-benefit]').forEach((d) =>
+      d.addEventListener('toggle', () => {
+        if (d.open) track('benefit_expand', { benefit: d.dataset.benefit });
+      }),
+    );
+  }
+</script>
