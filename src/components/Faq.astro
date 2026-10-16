@@ -1,9 +1,20 @@
 ---
+import { getImage } from 'astro:assets';
 import WaLink from './WaLink.astro';
 import { faq } from '../lib/data';
+import { environmentImages } from '../lib/images';
+
+// Fundo escuro com foto (o mesmo que o bloco de cotação usava na v01, aprovado pela Belgotex)
+const bg = await getImage({
+  src: environmentImages['pacific-oak-hall']!,
+  width: 1600,
+  format: 'webp',
+  quality: 55,
+});
 ---
 
-<section id="perguntas" class="section" data-section-id="faq" aria-labelledby="perguntas-title">
+<section id="perguntas" class="section faq-sec" data-section-id="faq" aria-labelledby="perguntas-title">
+  <img class="faq-bg" src={bg.src} alt="" width="1600" height="1067" loading="lazy" decoding="async" />
   <div class="container grid-12">
     <div class="faq-head">
       <h2 id="perguntas-title">Perguntas frequentes</h2>
@@ -36,6 +47,43 @@ import { faq } from '../lib/data';
   </div>
 </section>
 <style>
+  /* Seção escura com foto ao fundo */
+  .faq-sec {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: #17191c;
+    color: #fff;
+  }
+  .faq-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    opacity: 0.32;
+    filter: saturate(0.8);
+  }
+  .faq-sec::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      100deg,
+      rgba(23, 25, 28, 0.94) 0%,
+      rgba(23, 25, 28, 0.8) 45%,
+      rgba(23, 25, 28, 0.62) 100%
+    );
+  }
+  .faq-sec :focus-visible {
+    outline-color: #fff;
+  }
+  .faq-sec .muted {
+    color: rgba(255, 255, 255, 0.78);
+  }
   .grid-12 {
     row-gap: 2rem;
   }
@@ -47,7 +95,7 @@ import { faq } from '../lib/data';
   }
   .faq-list {
     grid-column: 1 / -1;
-    border-top: 1px solid var(--ink);
+    border-top: 1px solid rgba(255, 255, 255, 0.85);
   }
   @media (min-width: 900px) {
     .faq-head {
@@ -58,7 +106,7 @@ import { faq } from '../lib/data';
     }
   }
   details {
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
   }
   summary {
     cursor: pointer;
@@ -89,10 +137,11 @@ import { faq } from '../lib/data';
     display: grid;
     gap: 0.5rem;
     justify-items: start;
-    color: var(--ink-2);
+    color: rgba(255, 255, 255, 0.82);
   }
-  .answer :global(a) {
-    color: var(--ink);
+  .answer :global(a),
+  .faq-head :global(a) {
+    color: #fff;
   }
   .faq-head :global(svg),
   .answer :global(svg) {

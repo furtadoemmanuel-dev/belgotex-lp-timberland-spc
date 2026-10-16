@@ -1,4 +1,5 @@
 ---
+import QuoteLink from './QuoteLink.astro';
 /**
  * Anatomia da régua: vista explodida das 5 camadas, na ordem do catálogo do fabricante
  * (cat_timberland.pdf, p. 9): Excimer, camada de desgaste, textura sincronizada, núcleo de alta densidade e IXPE.
@@ -113,7 +114,7 @@ const ord = (n: number) => String(n).padStart(2, '0');
           <desc id="ly-svg-desc">
             De cima para baixo: 1, acabamento Excimer com PureCoat; 2, camada de uso de 0,50 milímetro; 3,
             textura sincronizada com o desenho da madeira; 4, núcleo SPC de alta densidade; 5, base acústica
-            IXPE de 1 milímetro. Total de 5 milímetros na régua padrão; 6,5 milímetros no grande formato.
+            IXPE de 1 milímetro. Total de 5 milímetros na régua Regular; 6,5 milímetros no grande formato.
           </desc>
           <defs>
             <linearGradient
@@ -302,9 +303,7 @@ const ord = (n: number) => String(n).padStart(2, '0');
           <figcaption>Foto real · verso das réguas, com a base acústica IXPE incorporada</figcaption>
         </figure>
         <div class="actions">
-          <a class="btn ly-btn" href="#cotacao" data-cta="quote" data-cta-id="quote_layers" data-loc="layers">
-            Solicitar cotação
-          </a>
+          <QuoteLink class="btn ly-btn" loc="layers">Solicitar cotação</QuoteLink>
         </div>
       </div>
     </div>
@@ -551,12 +550,12 @@ const ord = (n: number) => String(n).padStart(2, '0');
     font-size: var(--fs-sm);
     color: rgba(255, 255, 255, 0.72);
   }
-  .ly-btn {
+  :global(.ly-btn) {
     background: #fff;
     border-color: #fff;
     color: var(--ink);
   }
-  .ly-btn:hover {
+  :global(.ly-btn:hover) {
     background: var(--paper);
   }
   @media (max-width: 599px) {

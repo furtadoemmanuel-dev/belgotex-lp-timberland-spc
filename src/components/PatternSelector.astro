@@ -1,4 +1,5 @@
 ---
+import QuoteLink from './QuoteLink.astro';
 import { Picture, getImage } from 'astro:assets';
 import WaLink from './WaLink.astro';
 import Icon from './Icon.astro';
@@ -23,6 +24,9 @@ const thumbs = await Promise.all(
   })),
 );
 const xl = formats.find((f) => f.id === 'xl')!;
+// Texturas com a legenda da cor, geradas por scripts/make-downloads.py em public/downloads
+const download = (slug: string) =>
+  `/downloads/timberland-spc-${slug.replace(/^hb-/, '')}${slug.startsWith('hb-') ? '-hb' : ''}.jpg`;
 const formatLabel = Object.fromEntries(formats.map((f) => [f.id, f.short]));
 ---
 
@@ -31,8 +35,7 @@ const formatLabel = Object.fromEntries(formats.map((f) => [f.id, f.short]));
     <div class="section-head">
       <h2 id="padroes-title">7 padrões de carvalho, 3 formatos de régua</h2>
       <p class="lead">
-        Inspirado nas texturas e cores da natureza, cada padrão tem 24 réguas diferentes para o piso não
-        repetir o desenho. Escolha o formato e o padrão para ver os detalhes.
+        Inspirado nas texturas e cores da natureza. Escolha o formato e a cor para ver os detalhes.
       </p>
     </div>
 
@@ -73,7 +76,7 @@ const formatLabel = Object.fromEntries(formats.map((f) => [f.id, f.short]));
 
       <div class="grid-12 sel-body">
         <fieldset class="patterns">
-          <legend>Padrão</legend>
+          <legend>Cor</legend>
           <ul>
             {thumbs.map((p) => (
               <li data-formats={p.formats.join(' ')} hidden={!p.formats.includes(initialFormat)}>
@@ -86,6 +89,7 @@ const formatLabel = Object.fromEntries(formats.map((f) => [f.id, f.short]));
                     disabled={!p.formats.includes(initialFormat)}
                     data-name={`${p.code} ${p.name}`}
                     data-skp={p.skp}
+                    data-download={download(p.slug)}
                     data-note={p.note}
                     data-formats={p.formats.join(' ')}
                   />
@@ -102,7 +106,18 @@ const formatLabel = Object.fromEntries(formats.map((f) => [f.id, f.short]));
         <div class="preview" aria-live="polite">
           <div class="preview-media">
             {patterns.map((p) => (
-              <div class="pv-img" data-preview={p.id} hidden={p.id !== initialPattern}>
+              <a
+                class="pv-img"
+                data-preview={p.id}
+                hidden={p.id !== initialPattern}
+                href={download(p.slug)}
+                download
+                data-doc="texture"
+                data-cta="document"
+                data-cta-id={`texture_${p.id}`}
+                data-loc="pattern"
+                title="Clique para baixar a textura com a legenda"
+              >
                 <Picture
                   src={patternImages[p.slug]!}
                   formats={['avif', 'webp']}
@@ -112,7 +127,11 @@ const formatLabel = Object.fromEntries(formats.map((f) => [f.id, f.short]));
                   loading="lazy"
                   quality={72}
                 />
-              </div>
+                <span class="pv-dl" aria-hidden="true">
+                  <Icon name="download" /> Baixar textura
+                </span>
+                <span class="sr-only">Baixar a textura {p.code} {p.name} com legenda (JPG)</span>
+              </a>
             ))}
           </div>
           <div class="preview-info">
@@ -122,7 +141,7 @@ const formatLabel = Object.fromEntries(formats.map((f) => [f.id, f.short]));
             <dl class="kv">
               <div>
                 <dt>Formato</dt>
-                <dd data-pv-format>Padrão</dd>
+                <dd data-pv-format>Regular</dd>
               </div>
               <div>
                 <dt>Medida</dt>
@@ -140,19 +159,26 @@ const formatLabel = Object.fromEntries(formats.map((f) => [f.id, f.short]));
             <p class="small muted" data-pv-note hidden></p>
 
             <div class="actions">
+              <QuoteLink class="btn btn--primary" loc="pattern">Solicitar cotação</QuoteLink>
+              <!-- ROOMVO: gatilho do plug-in no seletor (data-roomvo-pattern acompanha o padrão escolhido) -->
               <a
-                class="btn btn--primary"
-                href="#cotacao"
-                data-cta="quote"
-                data-cta-id="quote_pattern"
+                class="btn btn--secondary"
+                href={config.simulatorUrl}
+                target="_blank"
+                rel="noopener"
+                data-roomvo-trigger
+                data-roomvo-product="timberland-spc"
+                data-roomvo-pattern={initialPattern}
+                data-cta="simulator"
+                data-cta-id="simulator_pattern"
                 data-loc="pattern"
-                data-prefill
               >
-                Solicitar cotação deste padrão
+                Ver no meu ambiente
+                <span class="sr-only"> (abre o simulador em nova aba)</span>
               </a>
-              <WaLink location="pattern" class="btn btn--secondary" />
             </div>
             <div class="sub-actions">
+              <WaLink location="pattern" class="link-arrow" />
               <a
                 class="link-arrow"
                 href="#amostra"
@@ -162,19 +188,19 @@ const formatLabel = Object.fromEntries(formats.map((f) => [f.id, f.short]));
                 data-cta-id="sample_pattern"
                 data-loc="pattern"
               >
-                Pedir amostra deste padrão <Icon name="arrow" />
+                Pedir amostra desta cor <Icon name="arrow" />
               </a>
               <a
                 class="link-arrow"
-                href={config.simulatorUrl}
-                target="_blank"
-                rel="noopener"
-                data-cta="simulator"
-                data-cta-id="simulator_pattern"
+                href={download(patterns[0]!.slug)}
+                data-pv-download
+                download
+                data-doc="texture"
+                data-cta="document"
+                data-cta-id="texture_download"
                 data-loc="pattern"
               >
-                Ver no meu ambiente <Icon name="external" />
-                <span class="sr-only"> (abre em nova aba)</span>
+                Baixar textura com legenda (JPG) <Icon name="download" />
               </a>
               <a
                 class="link-arrow"
@@ -343,10 +369,57 @@ const formatLabel = Object.fromEntries(formats.map((f) => [f.id, f.short]));
   .preview-media {
     background: var(--sand);
   }
+  .pv-img {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .pv-img[hidden] {
+    display: none;
+  }
   .pv-img :global(img) {
     width: 100%;
     aspect-ratio: 16 / 10;
     object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  /* Selo "Baixar textura": sempre visível no toque, aparece no hover com mouse */
+  .pv-dl {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(35, 31, 32, 0.82);
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    backdrop-filter: blur(6px);
+    transition:
+      opacity 0.25s,
+      transform 0.25s;
+  }
+  .pv-dl :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pv-dl {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    .pv-img:hover .pv-dl,
+    .pv-img:focus-visible .pv-dl {
+      opacity: 1;
+      transform: none;
+    }
+    .pv-img:hover :global(img) {
+      transform: scale(1.03);
+    }
   }
   .preview-info {
     display: grid;

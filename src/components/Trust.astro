@@ -1,7 +1,7 @@
 ---
+import QuoteLink from './QuoteLink.astro';
 import { getImage } from 'astro:assets';
 import Icon from './Icon.astro';
-import SealArc from './SealArc.astro';
 import { badges, specs, documents } from '../lib/data';
 import { badgeImages } from '../lib/images';
 
@@ -29,7 +29,8 @@ const docs = documents.filter((d) => d.id !== 'casoca');
 <section id="garantia" class="section section--sand" data-section-id="trust" aria-labelledby="garantia-title">
   <div class="container">
     <div class="section-head">
-      <h2 id="garantia-title">Garantia, certificações e documentos</h2>
+      <p class="eyebrow">Garantia, certificações e documentos</p>
+      <h2 id="garantia-title">Feito para a rotina pesada, com o toque natural da madeira</h2>
       <p class="lead">
         Seu investimento protegido contra defeitos latentes de fabricação, a partir da data da compra.
       </p>
@@ -45,8 +46,6 @@ const docs = documents.filter((d) => d.id !== 'casoca');
       </div>
     </div>
   </div>
-
-  <SealArc seals={badgeList.map((b) => ({ src: b.img.src, label: b.label }))} />
 
   <div class="container">
     <h3 class="sr-only">Selos e certificações</h3>
@@ -140,9 +139,7 @@ const docs = documents.filter((d) => d.id !== 'casoca');
       </ul>
     </details>
     <div class="actions after">
-      <a class="btn btn--primary" href="#cotacao" data-cta="quote" data-cta-id="quote_trust" data-loc="trust">
-        Solicitar cotação
-      </a>
+      <QuoteLink class="btn btn--primary" loc="trust">Solicitar cotação</QuoteLink>
     </div>
   </div>
 </section>
@@ -476,10 +473,8 @@ const docs = documents.filter((d) => d.id !== 'casoca');
 </style>
 
 <script>
-  import { initSealArc } from '../scripts/sealarc';
   import { track } from '../scripts/analytics';
 
-  initSealArc();
   document.querySelectorAll<HTMLDetailsElement>('[data-badge-group]').forEach((d) =>
     d.addEventListener('toggle', () => {
       if (d.open) track('badge_group_expand', { group: d.dataset.badgeGroup });

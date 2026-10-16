@@ -1,26 +1,38 @@
 ---
 import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
 import { closeupImages } from '../lib/images';
 // Close do relevo com luz rasante (referência do Emmanuel, girada 180°, em tom Silver Oak e com o relevo realçado) até a Belgotex enviar o macro oficial.
 import detailImg from '../assets/details/textura-sincronizada.jpg';
+// As 5 cores do formato Regular. Clicar no close baixa a textura inteira da cor, com a legenda.
 const items = [
   {
     id: 'close-canyon',
+    download: '/downloads/timberland-spc-001-canyon-oak.jpg',
     caption: 'Canyon Oak · veio e relevo sincronizados',
     alt: 'Close do padrão Canyon Oak mostrando veios de carvalho dourado',
   },
   {
-    id: 'close-harmony-hb',
-    caption: 'Harmony Oak · encontro das réguas em espinha de peixe',
-    alt: 'Close das réguas de Harmony Oak encaixadas em espinha de peixe',
+    id: 'close-classic',
+    download: '/downloads/timberland-spc-002-classic-oak.jpg',
+    caption: 'Classic Oak · carvalho em tom natural',
+    alt: 'Close do padrão Classic Oak, carvalho em tom natural',
   },
   {
     id: 'close-pacific',
+    download: '/downloads/timberland-spc-003-pacific-oak.jpg',
     caption: 'Pacific Oak · acabamento fosco Xtra Matte',
     alt: 'Close do padrão Pacific Oak, carvalho escuro com acabamento fosco',
   },
   {
+    id: 'close-woodland',
+    download: '/downloads/timberland-spc-004-woodland-oak.jpg',
+    caption: 'Woodland Oak · nós e veios aparentes',
+    alt: 'Close do padrão Woodland Oak, carvalho com nós e veios aparentes',
+  },
+  {
     id: 'close-silver',
+    download: '/downloads/timberland-spc-005-silver-oak.jpg',
     caption: 'Silver Oak · carvalho acinzentado',
     alt: 'Close do padrão Silver Oak, carvalho em tom cinza claro',
   },
@@ -32,26 +44,38 @@ const items = [
     <div class="section-head">
       <h2 id="texturas-title">Veja de perto</h2>
       <p class="lead">
-        A textura sincronizada acompanha o desenho de cada veio, e o acabamento fosco tira o brilho de
-        plástico. Na mão e no pé, parece madeira.
+        A textura sincronizada acompanha o desenho de cada veio, e o acabamento fosco tira o brilho. Na mão e no pé, parece madeira.
       </p>
     </div>
     <ul class="grid">
       {items.map((it) => (
         <li>
           <figure class="tile">
-            <span class="tile-media">
+            <a
+              class="tile-media"
+              href={it.download}
+              download
+              data-doc="texture"
+              data-cta="document"
+              data-cta-id={`texture_${it.id}`}
+              data-loc="textures"
+              title="Clique para baixar a textura com a legenda"
+            >
               <Picture
                 src={closeupImages[it.id]!}
                 formats={['avif', 'webp']}
                 widths={[360, 600, 900]}
-                sizes="(min-width: 1024px) 290px, 50vw"
+                sizes="(min-width: 1024px) 230px, 50vw"
                 alt={it.alt}
                 loading="lazy"
                 quality={74}
               />
               <span class="tile-light" aria-hidden="true"></span>
-            </span>
+              <span class="tile-dl" aria-hidden="true">
+                <Icon name="download" />
+              </span>
+              <span class="sr-only">Baixar a textura {it.caption.split(' · ')[0]} com legenda (JPG)</span>
+            </a>
             <figcaption class="small muted">{it.caption}</figcaption>
           </figure>
         </li>
@@ -80,6 +104,40 @@ const items = [
   </div>
 </section>
 <style>
+  .tile-media {
+    color: inherit;
+  }
+  .tile-dl {
+    position: absolute;
+    right: 0.6rem;
+    bottom: 0.6rem;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(35, 31, 32, 0.78);
+    color: #fff;
+    transition:
+      opacity 0.25s,
+      transform 0.25s;
+  }
+  .tile-dl :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .tile-dl {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    .tile:hover .tile-dl,
+    .tile-media:focus-visible .tile-dl {
+      opacity: 1;
+      transform: none;
+    }
+  }
   .textures {
     padding-top: 0;
   }
@@ -93,7 +151,16 @@ const items = [
   }
   @media (min-width: 1024px) {
     .grid {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+  /* No celular, a 5ª cor fecha a grade ocupando a linha inteira */
+  @media (max-width: 1023px) {
+    .grid li:last-child {
+      grid-column: 1 / -1;
+    }
+    .grid li:last-child figure :global(img) {
+      aspect-ratio: 2 / 1;
     }
   }
   figure {

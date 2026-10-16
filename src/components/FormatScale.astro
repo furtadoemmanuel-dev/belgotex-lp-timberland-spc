@@ -1,12 +1,12 @@
 ---
 /**
- * Os 3 formatos de régua lado a lado, em escala real entre si (1 cm = 1 cm), sobre uma régua de 0 a 190 cm.
- * Texturas originais do fornecedor: Canyon Oak (Padrão e XL) e Harmony Oak (HB, único padrão que existe em HB).
+ * Os 3 formatos de régua em pé, em escala real entre si e ao lado de uma pessoa de 1,73 m, sobre uma régua de 0 a 2 m.
+ * Texturas originais do fornecedor: Canyon Oak (Regular e XL) e Harmony Oak (HB, único padrão que existe em HB).
  * Gerado por scripts/prepare-assets.py → src/assets/formats/.
  * Referência de altura do catálogo (p. 7): uma pessoa de 1,73 m, marcada na mesma escala.
  */
 import { getImage } from 'astro:assets';
-import { formats, fmtSize } from '../lib/data';
+import { formats, fmtCm, fmtSize } from '../lib/data';
 import padrao from '../assets/formats/padrao.jpg';
 import hb from '../assets/formats/hb.jpg';
 import xl from '../assets/formats/xl.jpg';
@@ -16,7 +16,7 @@ interface Props {
 }
 const { initial } = Astro.props;
 
-const RULER_CM = 190;
+const TOP_CM = 200; // altura do palco (régua vertical de 0 a 2 m)
 const PERSON_CM = 173;
 const tex = { padrao, hb, xl } as const;
 const example = { padrao: 'Canyon Oak', hb: 'Harmony Oak', xl: 'Canyon Oak' } as const;
@@ -28,214 +28,243 @@ const rows = await Promise.all(
     img: await getImage({ src: tex[f.id], width: 1200, format: 'webp', quality: 72 }),
   })),
 );
-const ticks = Array.from({ length: RULER_CM / 10 + 1 }, (_, i) => i * 10);
+const ticks = Array.from({ length: TOP_CM / 10 + 1 }, (_, i) => i * 10);
 ---
 
-<figure class="fs" data-fs style={`--ruler:${RULER_CM};--person:${PERSON_CM}`}>
+<figure class="fs" data-fs style={`--top:${TOP_CM};--person:${PERSON_CM}`}>
   <figcaption class="fs-cap">
     <span class="fs-title">Os 3 formatos em escala</span>
     <span class="small fs-sub">
-      Proporções reais entre as réguas. Exemplos com a textura original: Canyon Oak e Harmony Oak (HB). A
-      linha tracejada marca 1,73 m, a altura de uma pessoa: o XL é maior.
+      Réguas em pé, em proporção real entre si e ao lado de uma pessoa de 1,73 m. Exemplos com a textura
+      original: Canyon Oak e Harmony Oak (HB).
     </span>
   </figcaption>
 
   <div class="fs-stage">
-    <div class="fs-person" aria-hidden="true">
-      <span class="fs-person-tag">
-        <svg viewBox="0 0 24 64" width="12" height="32" focusable="false">
-          <circle cx="12" cy="6" r="5"></circle>
-          <path d="M7 14h10a3 3 0 0 1 3 3v18h-3v27h-4.5V40h-1v22H7V35H4V17a3 3 0 0 1 3-3z"></path>
-        </svg>
-        1,73 m
-      </span>
-    </div>
-    {rows.map((r) => (
-      <div class:list={['fs-row', { on: r.id === initial }]} data-scale={r.id} style={`--i:${r.i}`}>
-        <p class="fs-label">
-          <strong>{r.short}</strong>
-          <span>{fmtSize(r)}</span>
-          <span class="fs-ex" aria-hidden="true">
-            · {r.example}
-          </span>
-        </p>
-        <span class="fs-plank" style={`--w:${r.widthCm};--h:${r.heightCm}`}>
-          <img
-            src={r.img.src}
-            alt=""
-            width="1200"
-            height={Math.round((1200 * r.heightCm) / r.widthCm)}
-            loading="lazy"
-            decoding="async"
-          />
-        </span>
-      </div>
-    ))}
-
     <div class="fs-ruler" aria-hidden="true">
       {ticks.map((t) => (
         <span class:list={['fs-tick', { major: t % 50 === 0 }]} style={`--t:${t}`}>
-          {t % 50 === 0 && <span class="fs-tick-label">{t === 0 ? '0' : `${t} cm`}</span>}
+          {t % 50 === 0 && t > 0 && <span class="fs-tick-label">{t} cm</span>}
         </span>
+      ))}
+    </div>
+    <span class="fs-line" aria-hidden="true">
+      <span class="fs-line-tag">1,73 m</span>
+    </span>
+    <div class="fs-items">
+      <div class="fs-person" aria-hidden="true">
+        <!-- Silhueta em proporção humana (1 unidade = 1 cm): cabeça ≈ 1/7,5 da altura, pernas ≈ 47% -->
+        <svg viewBox="0 0 60 173" focusable="false">
+          <ellipse cx="30" cy="11.5" rx="8.2" ry="11"></ellipse>
+          <path d="M27 21h6v6q11 0 13 4l-2 43 2.5 16-2.5 30-3 46 2 5q0 2-2 2h-7l-.5-7-1-46-1.5-27q-1.5-2.5-3 0l-1.5 27-1 46-.5 7H19q-2 0-2-2l2-5-3-46-2.5-30L16 74l-2-43q2-4 13-4z"></path>
+          <path d="M47.5 32q3.5-1 4.5 3l2 35-.5 22q-.5 3-2.5 3t-2-3l-.5-20-1-27z"></path>
+          <path d="M12.5 32q-3.5-1-4.5 3l-2 35 .5 22q.5 3 2.5 3t2-3l.5-20 1-27z"></path>
+        </svg>
+        <span class="fs-label"><strong>Pessoa</strong><span>1,73 m</span></span>
+      </div>
+      {rows.map((r) => (
+        <div class:list={['fs-row', { on: r.id === initial }]} data-scale={r.id} style={`--i:${r.i}`}>
+          <span class="fs-plank" style={`--len:${r.widthCm};--wid:${r.heightCm}`}>
+            <img src={r.img.src} alt="" width="1200" height={Math.round((1200 * r.heightCm) / r.widthCm)} loading="lazy" decoding="async" />
+          </span>
+          <span class="fs-label">
+            <strong>{r.short}</strong>
+            <span class="fs-size">{fmtSize(r)}</span>
+            <span class="fs-size-short" aria-hidden="true">{fmtCm(r.widthCm)} cm</span>
+            <span class="fs-ex" aria-hidden="true">{r.example}</span>
+          </span>
+        </div>
       ))}
     </div>
   </div>
 </figure>
 
 <style>
+  /* Palco escuro: as texturas, inclusive a clara do HB, ganham contraste. 1 cm = var(--u) px */
   .fs {
+    --H: 300px;
+    --u: calc(var(--H) / var(--top));
     margin: 1.75rem 0 0;
     padding: clamp(1rem, 0.75rem + 1.5vw, 2rem);
-    background: var(--sand);
+    background: #2a2725;
+    color: #f5f5f4;
     border-radius: var(--radius);
+  }
+  @media (min-width: 768px) {
+    .fs {
+      --H: 440px;
+    }
   }
   .fs-cap {
     display: grid;
     gap: 0.2rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
   }
   .fs-title {
     font-weight: 600;
   }
   .fs-sub {
-    color: var(--ink-2);
+    color: rgba(245, 245, 244, 0.75);
   }
   .fs-stage {
     position: relative;
-    display: grid;
-    gap: clamp(0.75rem, 0.5rem + 1vw, 1.25rem);
-    padding-top: 2.75rem;
+    height: var(--H);
+    margin: 0 0 4.25rem 3.25rem;
+    border-bottom: 2px solid rgba(245, 245, 244, 0.85);
   }
-  /* Altura de uma pessoa (1,73 m) na mesma escala das réguas */
-  .fs-person {
+  /* Régua vertical de 0 a 200 cm */
+  .fs-ruler {
     position: absolute;
+    left: -0.75rem;
     top: 0;
-    bottom: 2.5rem;
-    left: calc(var(--person) / var(--ruler) * 100%);
-    border-left: 1px dashed var(--ink-2);
+    bottom: 0;
+    width: 0;
+    border-left: 1px solid rgba(245, 245, 244, 0.55);
+  }
+  .fs-tick {
+    position: absolute;
+    left: -6px;
+    bottom: calc(var(--t) * var(--u));
+    width: 6px;
+    height: 1px;
+    background: rgba(245, 245, 244, 0.55);
+  }
+  .fs-tick.major {
+    left: -11px;
+    width: 11px;
+  }
+  .fs-tick-label {
+    position: absolute;
+    right: 14px;
+    top: -0.45rem;
+    font-size: 0.6875rem;
+    color: rgba(245, 245, 244, 0.7);
+    white-space: nowrap;
+  }
+  /* Linha da altura da pessoa, atravessando o palco */
+  .fs-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--person) * var(--u));
+    border-top: 1px dashed rgba(245, 245, 244, 0.5);
     pointer-events: none;
-    z-index: 1;
-    transform-origin: bottom;
   }
-  .fs-person-tag {
+  .fs-line-tag {
     position: absolute;
-    top: 0;
-    right: 0.4rem;
-    display: flex;
-    align-items: flex-end;
-    gap: 0.35rem;
+    left: 0.5rem;
+    bottom: 0.3rem;
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--ink-2);
-    white-space: nowrap;
-    line-height: 1;
+    color: rgba(245, 245, 244, 0.85);
   }
-  .fs-person-tag svg {
-    flex: none;
-    width: 12px;
-    height: 32px;
-    fill: currentColor;
+  .fs-items {
+    position: absolute;
+    inset: 0 0 0 0.75rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(1.5rem, 0.5rem + 5vw, 5.5rem);
   }
-
+  .fs-person,
   .fs-row {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .fs-person svg {
+    display: block;
+    width: calc(60 * var(--u));
+    height: calc(var(--person) * var(--u));
+    fill: #6b6866; /* cor sólida: com transparência, as partes sobrepostas (pescoço) apareciam como emenda */
+    transform-origin: bottom;
+  }
+  /* Rótulos ficam abaixo da linha do piso */
+  .fs-label {
+    position: absolute;
+    top: calc(100% + 0.6rem);
     display: grid;
-    gap: 0.35rem;
+    justify-items: center;
+    gap: 0.05rem;
+    font-size: 0.75rem;
+    line-height: 1.25;
+    color: rgba(245, 245, 244, 0.72);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .fs-label strong {
+    color: #fff;
+    font-size: 0.8125rem;
+  }
+  .fs-ex {
+    font-size: 0.6875rem;
+  }
+  .fs-size-short {
+    display: none;
+  }
+  /* No celular os rótulos ficam curtos (nome + comprimento) para não encostarem uns nos outros */
+  @media (max-width: 599px) {
+    .fs-ex,
+    .fs-size {
+      display: none;
+    }
+    .fs-size-short {
+      display: inline;
+    }
+  }
+  .fs-row {
     cursor: pointer;
-    opacity: 0.72;
-    filter: saturate(0.6);
-    transition:
-      opacity 0.45s ease,
-      filter 0.45s ease;
+    opacity: 0.85;
+    transition: opacity 0.45s ease;
   }
   .fs-row.on {
     opacity: 1;
-    filter: none;
   }
   @media (hover: hover) and (pointer: fine) {
     .fs-row:hover {
       opacity: 1;
-      filter: none;
     }
   }
-  .fs-label {
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 0.4rem;
-    font-size: var(--fs-sm);
-    color: var(--ink-2);
-  }
-  .fs-label strong {
-    color: var(--ink);
-  }
-  .fs-row.on .fs-label {
-    color: var(--ink);
-  }
-
-  /* Largura proporcional à régua de 190 cm; altura pela proporção real da régua */
+  /* Régua em pé: altura = comprimento, largura = largura real; a textura (horizontal) gira 90° */
   .fs-plank {
     position: relative;
     display: block;
-    width: calc(var(--w) / var(--ruler) * 100%);
-    aspect-ratio: var(--w) / var(--h);
+    width: calc(var(--wid) * var(--u));
+    height: calc(var(--len) * var(--u));
     overflow: hidden;
     border-radius: 1px;
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.5) inset,
-      0 10px 18px -12px rgba(35, 31, 32, 0.55);
-    transition:
-      transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
-      box-shadow 0.45s ease;
+    outline: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 18px 28px -16px rgba(0, 0, 0, 0.8);
+    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .fs-plank img {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(var(--len) * var(--u));
+    height: calc(var(--wid) * var(--u));
+    max-width: none;
     object-fit: cover;
+    transform: translate(-50%, -50%) rotate(90deg);
   }
   .fs-row.on .fs-plank {
-    transform: translateY(-2px);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.5) inset,
-      0 18px 26px -14px rgba(35, 31, 32, 0.6);
+    outline-color: #fff;
   }
-  /* Reflexo de luz que atravessa a régua escolhida */
+  .fs-row.on .fs-label strong::after {
+    content: '';
+    display: block;
+    height: 2px;
+    margin-top: 0.2rem;
+    background: #fff;
+  }
   .fs-plank::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.38) 50%, transparent 65%);
-    transform: translateX(-120%);
+    background: linear-gradient(180deg, transparent 35%, rgba(255, 255, 255, 0.38) 50%, transparent 65%);
+    transform: translateY(-120%);
     pointer-events: none;
-  }
-
-  .fs-ruler {
-    position: relative;
-    height: 2.25rem;
-    border-top: 1px solid var(--ink);
-    margin-top: 0.25rem;
-  }
-  .fs-tick {
-    position: absolute;
-    top: 0;
-    left: calc(var(--t) / var(--ruler) * 100%);
-    width: 1px;
-    height: 6px;
-    background: var(--ink);
-  }
-  .fs-tick.major {
-    height: 11px;
-  }
-  .fs-tick-label {
-    position: absolute;
-    top: 14px;
-    left: 0;
-    transform: translateX(-50%);
-    font-size: 0.75rem;
-    color: var(--ink-2);
-    white-space: nowrap;
-  }
-  .fs-tick:first-child .fs-tick-label {
-    transform: none;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -244,31 +273,26 @@ const ticks = Array.from({ length: RULER_CM / 10 + 1 }, (_, i) => i * 10);
     }
     @keyframes fs-sheen {
       to {
-        transform: translateX(120%);
+        transform: translateY(120%);
       }
     }
-    /* Entrada: as réguas se desenrolam da esquerda, em sequência, e a régua de medida cresce junto */
+    /* Entrada: as réguas sobem do piso, em sequência, e a pessoa cresce junto */
     .fs[data-wait] .fs-plank {
-      clip-path: inset(0 100% 0 0);
+      clip-path: inset(100% 0 0 0);
     }
-    .fs[data-wait] .fs-label,
-    .fs[data-wait] .fs-tick {
-      opacity: 0;
-    }
-    .fs[data-wait] .fs-ruler {
-      border-top-color: transparent;
-    }
-    .fs[data-wait] .fs-person {
+    .fs[data-wait] .fs-person svg {
       transform: scaleY(0);
     }
-    .fs[data-wait] .fs-person-tag {
+    .fs[data-wait] .fs-label,
+    .fs[data-wait] .fs-tick,
+    .fs[data-wait] .fs-line {
       opacity: 0;
     }
-    .fs.in .fs-person {
-      animation: fs-grow 0.9s cubic-bezier(0.65, 0, 0.25, 1) 0.7s both;
+    .fs.in .fs-person svg {
+      animation: fs-grow 0.9s cubic-bezier(0.65, 0, 0.25, 1) 0.1s both;
     }
-    .fs.in .fs-person-tag {
-      animation: fs-fade 0.5s ease 1.4s both;
+    .fs.in .fs-line {
+      animation: fs-fade 0.5s ease 1s both;
     }
     @keyframes fs-grow {
       from {
@@ -277,19 +301,19 @@ const ticks = Array.from({ length: RULER_CM / 10 + 1 }, (_, i) => i * 10);
     }
     .fs.in .fs-plank {
       animation: fs-reveal 1s cubic-bezier(0.65, 0, 0.25, 1) both;
-      animation-delay: calc(0.15s + var(--i) * 0.14s);
+      animation-delay: calc(0.3s + var(--i) * 0.14s);
     }
     .fs.in .fs-label {
       animation: fs-fade 0.5s ease both;
-      animation-delay: calc(0.35s + var(--i) * 0.14s);
+      animation-delay: calc(0.5s + var(--i, 0) * 0.14s);
     }
     .fs.in .fs-tick {
       animation: fs-fade 0.4s ease both;
-      animation-delay: calc(var(--t) / var(--ruler) * 0.8s);
+      animation-delay: calc(var(--t) / var(--top) * 0.8s);
     }
     @keyframes fs-reveal {
       from {
-        clip-path: inset(0 100% 0 0);
+        clip-path: inset(100% 0 0 0);
       }
       to {
         clip-path: inset(0 0 0 0);

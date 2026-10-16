@@ -1,4 +1,5 @@
 ---
+import QuoteLink from './QuoteLink.astro';
 // Rodapé no modelo do belgotex.com.br: logo + endereço + redes, colunas de links e o aviso "Importante".
 // No lugar da newsletter do site entra a chamada de cotação (a LP não coleta e-mail para newsletter).
 import Logo from './Logo.astro';
@@ -67,9 +68,7 @@ const policies = [
     <div class="f-cta">
       <h2 class="f-title">Cotação Timberland</h2>
       <p class="f-text">Receba sua cotação e amostras dos padrões que combinam com o seu projeto.</p>
-      <a class="btn f-btn" href="#cotacao" data-cta="quote" data-cta-id="quote_footer" data-loc="footer">
-        Solicitar cotação
-      </a>
+      <QuoteLink class="btn f-btn" loc="footer">Solicitar cotação</QuoteLink>
       <WaLink location="footer" class="btn f-btn f-btn--ghost" />
     </div>
   </div>
@@ -237,7 +236,7 @@ const policies = [
     color: #cfd3d9;
     margin-bottom: 0.5rem;
   }
-  .f-btn {
+  .footer :global(.f-btn) {
     width: 100%;
     background: transparent;
     border: 2px solid #fff;
@@ -245,7 +244,7 @@ const policies = [
     color: #fff;
     min-height: 48px;
   }
-  .f-btn:hover {
+  .footer :global(.f-btn:hover) {
     background: #fff;
     color: var(--slate);
   }

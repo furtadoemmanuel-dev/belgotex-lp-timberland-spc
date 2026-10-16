@@ -8,6 +8,31 @@ Site estático em Astro, publicado em subdomínio (sugestão: `timberland.belgot
 - Etapa A (inventário, IA, wireframe) aprovada em 11/10/2026.
 - **Etapa B (produção) entregue.** Falta resolver as pendências da Belgotex antes do build de produção (ver abaixo).
 
+## Versão 02 (14/10/2026): ajustes pedidos pela Belgotex
+
+- Formato "Padrão" passa a se chamar **Regular**.
+- **Simulador** com mais destaque: seção própria (`#simulador`), botão no seletor e atalho no hero, com marcações
+  para o plug-in Roomvo (ver `docs/roomvo.md`).
+- Link do **e-catálogo** (`https://www.belgotex.com.br/e-catalogos/timberland-spc`).
+- **Solicitar cotação** leva direto ao site da Belgotex (`QUOTE_URL`, com UTM); o formulário de cotação saiu da LP.
+- **Amostra**: com `SAMPLE_EMAIL` preenchido (e `LEAD_ENDPOINT` vazio), o envio abre o e-mail da pessoa com o pedido
+  pronto para esse endereço.
+- **Texturas para download** com a legenda da cor: `public/downloads/` (gerar de novo com
+  `python3 scripts/make-downloads.py`). Clicar na textura do seletor ou nos closes de "Veja de perto" baixa o JPG.
+- Garantia, selos e especificações sobem para logo depois do hero.
+
+**Segundo lote (14/10/2026, `att_LP_timberland.pdf`):**
+
+- Hero sem as bolinhas de cor e sem os selos; a faixa abaixo dele mostra as **5 cores Regular** (cada régua leva à
+  cor no seletor). Saiu o divisor de réguas.
+- Saíram os cards de benefícios; o título "Feito para a rotina pesada…" abre a seção de garantia e selos.
+- Saiu o carrossel 3D de selos (os grupos expansivos ficam).
+- Cotação abre direto o formulário do site (`#cotacao`); ver `docs/cotacao-site.md` para vir já com o Timberland.
+- Seletor: rótulo "Cor" (no lugar de "Padrão") e sem a frase das 24 réguas.
+- "Os 3 formatos em escala": réguas em pé ao lado de uma pessoa de 1,73 m, em fundo escuro.
+- "Veja de perto": as 5 cores Regular e sem "de plástico".
+- Perguntas frequentes com o fundo escuro com foto (o do antigo bloco de cotação).
+
 ## Rodar localmente
 
 ```bash
@@ -52,8 +77,10 @@ estiver vazio. **Não usar este build em produção.**
 
 | Variável | Para quê |
 |---|---|
-| `WHATSAPP_NUMBER` | Número do consultor (padrão: o mesmo do site, `554291391436`) |
+| `WHATSAPP_NUMBER` | Número do consultor do XP (padrão: `5542991391436`, (42) 99139-1436) |
 | `CAMPAIGN_CODE` | Código na mensagem do WhatsApp e no lead (`LP-TIMBERLAND-SPC`) |
+| `QUOTE_URL` | Página do site da Belgotex para onde vai "Solicitar cotação" |
+| `SAMPLE_EMAIL` | E-mail que recebe os pedidos de amostra (XP) |
 | `LEAD_ENDPOINT` | Destino do formulário. Vazio = modo simulado, nada é enviado (ver `docs/integration-rd.md`) |
 | `SIMULATOR_URL` | "Ver no meu ambiente" (hoje, página do produto até a Roomvo liberar o subdomínio) |
 | `PRIVACY_URL`, `COOKIES_URL` | Políticas da Belgotex |

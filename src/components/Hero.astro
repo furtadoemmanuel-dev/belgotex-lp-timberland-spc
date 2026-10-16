@@ -1,29 +1,22 @@
 ---
+import QuoteLink from './QuoteLink.astro';
 import { getImage } from 'astro:assets';
 import WaLink from './WaLink.astro';
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
-import { badges, environments, patterns } from '../lib/data';
-import { badgeImages, environmentImages, patternImages } from '../lib/images';
+import { environments, patterns } from '../lib/data';
+import { environmentImages, patternImages } from '../lib/images';
 
-const heroBadges = badges.filter((b) => b.hero);
-const dots = await Promise.all(
-  patterns.map(async (p) => ({
-    ...p,
-    img: await getImage({ src: patternImages[p.slug]!, width: 96, height: 96, fit: 'cover', format: 'webp' }),
-  })),
-);
-const heroBadgeImgs = await Promise.all(
-  heroBadges.map(async (b) => ({
-    ...b,
-    img: await getImage({ src: badgeImages[b.id]!, width: 176, height: 176, format: 'webp' }),
-  })),
-);
-const plankSlugs = ['001-canyon-oak', '004-woodland-oak', '002-classic-oak', '003-pacific-oak'];
+// Faixa logo abaixo do hero: as 5 cores do formato Regular (cada régua leva à cor no seletor)
+const plankIds = ['001', '002', '003', '004', '005'];
 const planks = await Promise.all(
-  plankSlugs.map((s) =>
-    getImage({ src: patternImages[s]!, width: 640, height: 100, fit: 'cover', format: 'webp', quality: 70 }),
-  ),
+  plankIds.map(async (id) => {
+    const p = patterns.find((x) => x.id === id)!;
+    return {
+      ...p,
+      img: await getImage({ src: patternImages[p.slug]!, width: 640, height: 100, fit: 'cover', format: 'webp', quality: 70 }),
+    };
+  }),
 );
 
 // Carrossel "abertura": a próxima foto abre num círculo a partir do clique (src/scripts/aperture.ts)
@@ -155,30 +148,15 @@ const pad2 = (n: number) => String(n).padStart(2, '0');
           </li>
         </ul>
         <div class="actions">
-          <a class="btn btn--light" href="#cotacao" data-cta="quote" data-cta-id="quote_hero" data-loc="hero">
-            Solicitar cotação
-          </a>
+          <QuoteLink class="btn btn--light" loc="hero">Solicitar cotação</QuoteLink>
           <WaLink location="hero" class="btn btn--ghost" />
         </div>
         <div class="dots">
-          <ul aria-label="Os 7 padrões de carvalho">
-            {dots.map((d) => (
-              <li>
-                <a href="#padroes" data-pattern-link={d.id} title={`${d.code} ${d.name}`}>
-                  <img
-                    src={d.img.src}
-                    width="48"
-                    height="48"
-                    alt={`${d.code} ${d.name}`}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </a>
-              </li>
-            ))}
-          </ul>
-          <a href="#padroes" class="small dots-label">
-            Ver os 7 padrões
+          <a href="#simulador" class="small dots-label sim-link" data-cta="simulator" data-cta-id="simulator_hero" data-loc="hero">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 10.5 12 4l9 6.5V20H3zM9 20v-6h6v6"></path>
+            </svg>
+            Ver no meu ambiente
           </a>
         </div>
         <Logo class="hero-logo" />
@@ -223,18 +201,17 @@ const pad2 = (n: number) => String(n).padStart(2, '0');
   </div>
 
   <div class="container">
-    <div class="floor" aria-hidden="true">
+    <ul class="floor" aria-label="As 5 cores Timberland Regular">
       {planks.map((p, i) => (
-        <span class="plank" style={`--i:${i}`}>
-          <img src={p.src} width="640" height="100" alt="" decoding="async" />
-        </span>
-      ))}
-    </div>
-    <ul class="proof" aria-label="Garantias e certificações">
-      {heroBadgeImgs.map((b) => (
-        <li>
-          <img src={b.img.src} width="88" height="88" alt="" loading="lazy" decoding="async" />
-          <span>{b.label}</span>
+        <li class="plank-item" style={`--i:${i}`}>
+          <a href="#padroes" data-pattern-link={p.id} class="plank-link">
+            <span class="plank">
+              <img src={p.img.src} width="640" height="100" alt="" loading="lazy" decoding="async" />
+            </span>
+            <span class="plank-name small">
+              <span class="plank-code">{p.code}</span> {p.name}
+            </span>
+          </a>
         </li>
       ))}
     </ul>
@@ -444,12 +421,12 @@ const pad2 = (n: number) => String(n).padStart(2, '0');
   }
 
   /* Botões em versão clara sobre a foto */
-  .btn--light {
+  .stage :global(.btn--light) {
     background: #fff;
     border-color: #fff;
     color: var(--ink);
   }
-  .btn--light:hover {
+  .stage :global(.btn--light:hover) {
     background: var(--paper);
   }
   .stage :global(.btn--ghost) {
@@ -471,32 +448,6 @@ const pad2 = (n: number) => String(n).padStart(2, '0');
     gap: 1rem;
     flex-wrap: wrap;
   }
-  .dots ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-  }
-  .dots li + li {
-    margin-left: -6px;
-  }
-  .dots ul a {
-    display: block;
-    border-radius: 50%;
-    border: 1.5px solid rgba(255, 255, 255, 0.85);
-  }
-  .dots img {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  .dots ul a:hover,
-  .dots ul a:focus-visible {
-    position: relative;
-    z-index: 1;
-    transform: translateY(-2px);
-  }
   .dots-label {
     font-weight: 600;
     min-height: 44px;
@@ -506,6 +457,13 @@ const pad2 = (n: number) => String(n).padStart(2, '0');
   }
   .dots-label:hover {
     text-decoration: underline;
+  }
+  .sim-link {
+    gap: 0.4rem;
+  }
+  .sim-link svg {
+    width: 18px;
+    height: 18px;
   }
 
   /* Barra do carrossel: legenda, contador, controles e a linha de progresso */
@@ -587,54 +545,67 @@ const pad2 = (n: number) => String(n).padStart(2, '0');
     }
   }
 
-  /* Réguas "encaixam" (clic) quando entram na tela */
+  /* As 5 cores em réguas, que "encaixam" (clic) quando entram na tela */
   .floor {
+    list-style: none;
+    margin: clamp(2.5rem, 2rem + 2vw, 4rem) 0 0;
+    padding: 0;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2px;
+    gap: 0.75rem 2px;
+    /* o encaixe entra deslocado para a direita: sem isso, gera rolagem lateral durante a animação */
     overflow: clip;
     overflow-clip-margin: 0;
-    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
-  }
-  @media (min-width: 600px) {
-    .floor {
-      grid-template-columns: repeat(2, 1fr);
-    }
   }
   @media (min-width: 1024px) {
     .floor {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
     }
+  }
+  .plank-link {
+    display: grid;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
   }
   .plank {
     display: block;
-    aspect-ratio: 6.43 / 1;
+    aspect-ratio: 10 / 1;
     overflow: hidden;
     background: var(--stone);
+  }
+  @media (min-width: 1024px) {
+    .plank {
+      aspect-ratio: 6.43 / 1;
+    }
   }
   .plank img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
-  .plank:nth-child(n + 2) {
-    display: none;
+  .plank-name {
+    font-weight: 600;
   }
-  @media (min-width: 600px) {
-    .plank:nth-child(2) {
-      display: block;
+  .plank-code {
+    color: var(--ink-2);
+    font-weight: 400;
+    margin-right: 0.15rem;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .plank-link:hover img {
+      transform: scale(1.06);
     }
-  }
-  @media (min-width: 1024px) {
-    .plank:nth-child(n + 3) {
-      display: block;
+    .plank-link:hover .plank-name {
+      text-decoration: underline;
     }
   }
   @media (prefers-reduced-motion: no-preference) {
-    .floor[data-wait] .plank {
+    .floor[data-wait] .plank-item {
       opacity: 0;
     }
-    .floor.in .plank {
+    .floor.in .plank-item {
       animation: clic 0.7s cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
       animation-delay: calc(0.1s + var(--i) * 0.12s);
     }
@@ -655,35 +626,5 @@ const pad2 = (n: number) => String(n).padStart(2, '0');
         opacity: 1;
       }
     }
-  }
-  .proof {
-    list-style: none;
-    padding: 0;
-    margin: 1.75rem 0 0;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem clamp(0.75rem, 0.25rem + 2vw, 2rem);
-  }
-  .proof li {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1.0625rem);
-    font-weight: 500;
-    line-height: 1.3;
-  }
-  @media (max-width: 639px) {
-    .proof li {
-      flex-direction: column;
-      text-align: center;
-      gap: 0.5rem;
-    }
-  }
-  .proof img {
-    width: clamp(60px, 44px + 3vw, 88px);
-    height: clamp(60px, 44px + 3vw, 88px);
-    flex: none;
-    object-fit: contain;
-    mix-blend-mode: multiply;
   }
 </style>

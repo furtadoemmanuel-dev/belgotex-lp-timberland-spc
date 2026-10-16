@@ -48,6 +48,11 @@ export function initSelector(): void {
     note.textContent = p.dataset.note ?? '';
     note.hidden = !p.dataset.note;
     $<HTMLAnchorElement>('[data-pv-skp]').href = p.dataset.skp ?? '#';
+    $<HTMLAnchorElement>('[data-pv-download]').href = p.dataset.download ?? '#';
+    // ROOMVO: todos os gatilhos do simulador levam o padrão escolhido
+    document
+      .querySelectorAll<HTMLElement>('[data-roomvo-trigger]')
+      .forEach((el) => (el.dataset.roomvoPattern = p.value));
     $<HTMLElement>('[data-xl-note]').hidden = f !== 'xl';
     root
       .querySelectorAll<HTMLElement>('[data-scale]')

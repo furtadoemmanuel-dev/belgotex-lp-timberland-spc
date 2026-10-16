@@ -68,11 +68,14 @@ test('WhatsApp leva código da campanha, origem, padrão e formato', async ({ pa
   await page.locator('#padroes').scrollIntoViewIfNeeded();
   await page.locator('label:has(input[name="format"][value="xl"])').click();
   await page.locator('label:has(input[name="pattern"][value="002"])').click();
+  // O simulador acompanha o padrão escolhido (marcação para o plug-in Roomvo)
+  await expect(page.locator('#simulador [data-roomvo-trigger]')).toHaveAttribute('data-roomvo-pattern', '002');
+  await expect(page.locator('[data-pv-download]')).toHaveAttribute('href', '/downloads/timberland-spc-002-classic-oak.jpg');
   const wa = page.locator('#padroes a.js-wa');
   await wa.evaluate((a) => a.addEventListener('click', (e) => e.preventDefault(), { once: true }));
   await wa.click();
   const href = decodeURIComponent((await wa.getAttribute('href'))!);
-  expect(href).toContain('https://wa.me/554291391436');
+  expect(href).toContain('https://wa.me/5542991391436');
   expect(href).toContain('Padrão: 002 Classic Oak.');
   expect(href).toContain('Formato: Grande formato (XL).');
   expect(href).toContain('origem: pattern');
@@ -94,59 +97,27 @@ test('seletor: XL mostra só os padrões disponíveis e a ficha do grande format
   await expect(page.locator('[data-xl-note]')).toBeHidden();
 });
 
-test('formulário: erros, pré-preenchimento e envio com sucesso', async ({ page }) => {
+test('cotação leva ao site da Belgotex com UTM, sem formulário na página', async ({ page }) => {
   await open(page);
-  // Seleciona um padrão e pede cotação dele
-  await page.locator('label:has(input[name="pattern"][value="003"])').click();
-  await page.getByRole('link', { name: 'Solicitar cotação deste padrão' }).click();
-
-  await page.getByRole('button', { name: 'Continuar' }).click();
-  await expect(page.locator('#e-name')).toHaveText('Informe seu nome.');
-  await expect(page.locator('#f-name')).toHaveAttribute('aria-invalid', 'true');
-
-  await page.fill('#f-name', 'Ana Souza');
-  await page.fill('#f-phone', '42991234567');
-  await expect(page.locator('#f-phone')).toHaveValue('(42) 99123-4567');
-  await page.selectOption('#f-profile', 'arquiteto-designer');
-  await page.getByRole('button', { name: 'Continuar' }).click();
-
-  await expect(page.locator('[data-more]')).toHaveAttribute('open', '');
-  await expect(page.locator('#f-pattern')).toHaveValue('003');
-  await expect(page.locator('#f-format')).toHaveValue('padrao');
-  await page.getByRole('button', { name: 'Solicitar cotação', exact: true }).click();
-  await expect(page.locator('#e-email')).not.toBeEmpty();
-  await expect(page.locator('#e-consent')).not.toBeEmpty();
-
-  await page.fill('#f-email', 'ana@estudio.com.br');
-  await page.fill('#f-city', 'Curitiba');
-  await page.selectOption('#f-uf', 'PR');
-  await page.check('#lead-form input[name="consent"]');
-  await page.waitForTimeout(3100); // tempo mínimo anti-robô
-  await page.getByRole('button', { name: 'Solicitar cotação', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Pedido recebido' })).toBeVisible();
-  const wa = decodeURIComponent((await page.locator('[data-success] a.js-wa').getAttribute('href'))!);
-  expect(wa).toContain(`Código: ${CODE} · origem: form_success`);
-  expect(await events(page)).toEqual(expect.arrayContaining(['form_start', 'form_error', 'form_submit']));
+  await expect(page.locator('#cotacao')).toHaveCount(0);
+  const links = page.locator('a[data-cta="quote"]');
+  expect(await links.count()).toBeGreaterThanOrEqual(6);
+  for (const href of await links.evaluateAll((els) => els.map((e) => (e as HTMLAnchorElement).href))) {
+    expect(href).toMatch(/^https:\/\/www\.belgotex\.com\.br\//);
+    expect(href).toContain('utm_source=lp-timberland');
+    expect(href).toMatch(/#cotacao$/);
+  }
+  await expect(page.locator('#inicio a[data-cta="quote"]')).toHaveAttribute('target', '_blank');
 });
 
-test('formulário: falha no envio mantém os dados e oferece WhatsApp', async ({ page }) => {
+test('texturas para download com legenda e link do e-catálogo', async ({ page }) => {
   await open(page);
-  await page.locator('#cotacao').scrollIntoViewIfNeeded();
-  await page.fill('#f-name', 'Ana Souza');
-  await page.fill('#f-phone', '4232221100');
-  await page.selectOption('#f-profile', 'consumidor');
-  await page.getByRole('button', { name: 'Continuar' }).click();
-  await page.fill('#f-email', 'ana@email.com');
-  await page.fill('#f-city', 'Ponta Grossa');
-  await page.selectOption('#f-uf', 'PR');
-  await page.locator('[data-more] summary').click(); // campos opcionais ficam recolhidos
-  await page.fill('#f-message', 'teste [[simular-erro]]');
-  await page.check('#lead-form input[name="consent"]');
-  await page.waitForTimeout(3100);
-  await page.getByRole('button', { name: 'Solicitar cotação', exact: true }).click();
-  await expect(page.locator('[data-form-error]')).toBeVisible();
-  await expect(page.locator('#f-email')).toHaveValue('ana@email.com');
-  await expect(page.locator('[data-form-error] a.js-wa')).toBeVisible();
+  await expect(page.locator('#texturas a[download]')).toHaveCount(5);
+  const res = await page.request.get('/downloads/timberland-spc-005-silver-oak.jpg');
+  expect(res.status()).toBe(200);
+  expect(res.headers()['content-type']).toContain('image/jpeg');
+  await expect(page.locator('a[href="https://www.belgotex.com.br/e-catalogos/timberland-spc"]').first()).toBeAttached();
+  await expect(page.locator('[data-pv-format]')).toHaveText('Regular');
 });
 
 test('amostra: CTA abre o painel, valida padrões e endereço e envia', async ({ page }) => {
@@ -178,8 +149,13 @@ test('amostra: CTA abre o painel, valida padrões e endereço e envia', async ({
   await dlg.locator('input[name="consent"]').check();
   await page.waitForTimeout(3100); // tempo mínimo anti-robô
   await dlg.getByRole('button', { name: 'Solicitar amostra' }).click();
-  await expect(dlg.getByRole('heading', { name: 'Pedido de amostra recebido' })).toBeVisible();
+  // Com SAMPLE_EMAIL (e-mail do XP), o envio abre o e-mail da pessoa já preenchido
+  await expect(dlg.getByRole('heading', { name: 'Falta só enviar o e-mail' })).toBeVisible();
   await expect(dlg.locator('[data-sp-summary]')).toContainText('Pacific Oak');
+  const mail = decodeURIComponent((await dlg.locator('[data-sp-mail-link]').getAttribute('href'))!);
+  expect(mail).toMatch(/^mailto:lucas\.boita@belgotex\.com\.br\?subject=Pedido de amostra Timberland SPC/);
+  expect(mail).toContain('Pacific Oak');
+  expect(mail).toContain('CEP 84043-737');
   expect(await events(page)).toEqual(expect.arrayContaining(['sample_open', 'sample_step', 'sample_submit']));
 });
 

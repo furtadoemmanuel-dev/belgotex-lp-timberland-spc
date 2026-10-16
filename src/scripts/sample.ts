@@ -202,6 +202,22 @@ export function initSample(): void {
       ...getUtms(),
       submitted_at: new Date().toISOString(),
     };
+    // Sem integração (LEAD_ENDPOINT) e com SAMPLE_EMAIL: abre o e-mail da pessoa com o pedido preenchido
+    const to = form.dataset.email;
+    if (!form.dataset.endpoint && to) {
+      const profileLabel =
+        (form.elements.namedItem('profile') as HTMLSelectElement).selectedOptions[0]?.text ?? payload.profile;
+      const href = sampleMailto(to, { ...payload, profile: profileLabel }, patterns.map(patternName));
+      track('sample_submit', { perfil: payload.profile, patterns: patterns.join(','), uf: payload.uf, channel: 'email' });
+      done();
+      success.querySelector<HTMLElement>('[data-sp-success-title]')!.textContent = 'Falta só enviar o e-mail';
+      success.querySelector<HTMLElement>('[data-sp-success-text]')!.hidden = true;
+      const mail = success.querySelector<HTMLElement>('[data-sp-mail]')!;
+      mail.hidden = false;
+      mail.querySelector<HTMLAnchorElement>('[data-sp-mail-link]')!.href = href;
+      window.location.href = href;
+      return;
+    }
     submitBtn.setAttribute('aria-busy', 'true');
     submitBtn.disabled = true;
     try {
@@ -234,3 +250,27 @@ export function initSample(): void {
     io.observe(fan);
   }
 }
+
+/** Pedido de amostra como e-mail (mailto) para quem atende as amostras, com todos os dados do formulário. */
+function sampleMailto(to: string, p: SampleLeadPayload, names: string[]): string {
+  const lines = [
+    'Olá! Gostaria de receber amostras do piso Timberland SPC.',
+    '',
+    `Padrões: ${names.join(', ')}`,
+    '',
+    `Nome: ${p.name}`,
+    `Perfil: ${p.profile}`,
+    `E-mail: ${p.email}`,
+    `Telefone: ${p.phone}`,
+    '',
+    'Endereço de entrega:',
+    `${p.street}, ${p.number}${p.complement ? ` – ${p.complement}` : ''}`,
+    `${p.district} – ${p.city}/${p.uf}`,
+    `CEP ${p.cep}`,
+    '',
+    `Código: ${p.campaign_code} · origem: ${p.click_origin}`,
+  ];
+  const subject = `Pedido de amostra Timberland SPC – ${p.name}`;
+  return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+}
+

@@ -55,6 +55,9 @@ closeups = {
     "close-pacific": (SRC / "Cores Padrão/003-PacificOak.jpg", .35, .6, 900),
     "close-harmony-hb": (SRC / "ambientadas/Harmony_angleswatch.jpg", .5, .55, 2200),
     "close-silver": (SRC / "Cores Padrão/005-SilverOak.jpg", .5, .45, 700),
+    # v02: "Veja de perto" mostra as 5 cores Regular
+    "close-classic": (SRC / "Cores Padrão/002-ClassicOak.jpg", .5, .5, 900),
+    "close-woodland": (SRC / "Cores Padrão/004-WoodlandOak.jpg", .5, .5, 900),
 }
 for slug, (path, cx, cy, side) in closeups.items():
     save(crop_square(Image.open(path), cx, cy, side), OUT / "closeups" / f"{slug}.jpg", 1200)

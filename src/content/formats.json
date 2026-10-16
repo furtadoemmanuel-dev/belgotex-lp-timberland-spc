@@ -1,5 +1,5 @@
 [
-  { "id": "padrao", "label": "Padrão", "short": "Padrão", "widthCm": 123.5, "heightCm": 19.2, "description": "A medida clássica, equilibrada para qualquer ambiente.", "source": "CAT p.7, PÁG", "provisional": false, "thickness": "5 mm (4 mm + 1 mm IXPE)", "wear": "0,50 mm", "useClass": "23 · 32" },
+  { "id": "padrao", "label": "Regular", "short": "Regular", "widthCm": 123.5, "heightCm": 19.2, "description": "A medida clássica, equilibrada para qualquer ambiente.", "source": "CAT p.7, PÁG", "provisional": false, "thickness": "5 mm (4 mm + 1 mm IXPE)", "wear": "0,50 mm", "useClass": "23 · 32" },
   { "id": "hb", "label": "Espinha de peixe (HB)", "short": "HB", "widthCm": 71, "heightCm": 14.2, "description": "Réguas para o padrão espinha de peixe, com menos perda de material.", "source": "CAT p.7, FICHA", "provisional": false, "thickness": "5 mm (4 mm + 1 mm IXPE)", "wear": "0,50 mm", "useClass": "23 · 32" },
   { "id": "xl", "label": "Grande formato (XL)", "short": "XL", "widthCm": 184.2, "heightCm": 23, "description": "Réguas longas para espaços amplos, onde cada peça é protagonista.", "source": "CAT p.7, p.33 e p.67", "provisional": false, "thickness": "6,5 mm (5,5 mm + 1 mm IXPE)", "wear": "0,55 mm", "useClass": "23 · 33" }
 ]

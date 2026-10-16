@@ -1,4 +1,5 @@
 ---
+import QuoteLink from './QuoteLink.astro';
 import Brandmark from './Brandmark.astro';
 import WaLink from './WaLink.astro';
 ---
@@ -14,19 +15,11 @@ import WaLink from './WaLink.astro';
     <nav class="anchors" aria-label="Seções da página">
       <a href="#padroes">Padrões</a>
       <a href="#ambientes">Ambientes</a>
-      <a href="#especificadores">Especificações</a>
+      <a href="#garantia">Especificações</a>
     </nav>
     <div class="header-ctas">
       <WaLink location="header" class="header-wa" icon={false} />
-      <a
-        class="btn btn--primary btn--sm"
-        href="#cotacao"
-        data-cta="quote"
-        data-cta-id="quote_header"
-        data-loc="header"
-      >
-        Solicitar cotação
-      </a>
+      <QuoteLink class="btn btn--primary btn--sm" loc="header">Solicitar cotação</QuoteLink>
     </div>
   </div>
 </header>

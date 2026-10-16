@@ -1,0 +1,174 @@
+---
+/**
+ * "Veja no seu ambiente": destaque do simulador (Roomvo), como no site da Belgotex.
+ *
+ * ROOMVO — pontos de integração (ver docs/roomvo.md):
+ * - Todo elemento com [data-roomvo-trigger] é um botão "Ver no meu ambiente". Hoje ele leva a SIMULATOR_URL
+ *   (página do produto no site, onde o plug-in já funciona).
+ * - [data-roomvo-product] traz o produto (timberland-spc) e [data-roomvo-pattern] o padrão escolhido no seletor
+ *   (atualizado por src/scripts/selector.ts), para o plug-in abrir já na cor certa.
+ * - Quando a Roomvo liberar o subdomínio, basta carregar o script do plug-in e ligar os gatilhos
+ *   (o ponto está marcado em src/layouts/Base.astro, "ROOMVO SCRIPT").
+ */
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import { config } from '../config';
+import { environmentImages } from '../lib/images';
+
+const steps = [
+  ['Fotografe o ambiente', 'Use uma foto do seu espaço, tirada na hora ou da galeria do celular.'],
+  ['Escolha o padrão', 'Aplique os padrões Timberland no piso da sua foto.'],
+  ['Compare e decida', 'Troque de padrão quantas vezes quiser antes de pedir a amostra.'],
+];
+---
+
+<section id="simulador" class="section simulator" data-section-id="simulator" aria-labelledby="simulador-title">
+  <div class="container grid-12">
+    <div class="sim-media">
+      <Picture
+        src={environmentImages['silver-oak-living']!}
+        formats={['avif', 'webp']}
+        widths={[640, 960, 1280]}
+        sizes="(min-width: 900px) 50vw, 100vw"
+        alt="Sala de estar com piso Timberland Silver Oak"
+        loading="lazy"
+        quality={70}
+      />
+      <span class="sim-badge" aria-hidden="true">
+        <Icon name="external" /> Simulador Belgotex
+      </span>
+    </div>
+    <div class="sim-copy">
+      <p class="eyebrow">Simulador</p>
+      <h2 id="simulador-title">Veja o Timberland no seu ambiente.</h2>
+      <p class="lead">
+        Antes de decidir, aplique os padrões no piso de uma foto do seu espaço, com o simulador da Belgotex.
+      </p>
+      <ol class="steps">
+        {steps.map(([t, d], i) => (
+          <li>
+            <span class="n" aria-hidden="true">{i + 1}</span>
+            <span>
+              <strong>{t}</strong>
+              <span class="small muted">{d}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+      <div class="actions">
+        <!-- ROOMVO: gatilho principal do plug-in -->
+        <a
+          class="btn btn--primary"
+          href={config.simulatorUrl}
+          target="_blank"
+          rel="noopener"
+          data-roomvo-trigger
+          data-roomvo-product="timberland-spc"
+          data-roomvo-pattern=""
+          data-cta="simulator"
+          data-cta-id="simulator_section"
+          data-loc="simulator"
+        >
+          Ver no meu ambiente
+          <span class="sr-only"> (abre o simulador em nova aba)</span>
+        </a>
+        <a
+          class="btn btn--secondary"
+          href={config.catalogUrl}
+          target="_blank"
+          rel="noopener"
+          data-doc="catalogo"
+          data-cta="document"
+          data-cta-id="document_catalogo_simulator"
+          data-loc="simulator"
+        >
+          Ver o catálogo
+          <span class="sr-only"> (abre o e-catálogo em nova aba)</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .simulator {
+    background: var(--sand);
+  }
+  .grid-12 {
+    row-gap: 2.5rem;
+    align-items: center;
+  }
+  .sim-media {
+    grid-column: 1 / -1;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    aspect-ratio: 4 / 3;
+  }
+  .sim-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .sim-badge {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+  .sim-badge :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+  .sim-copy {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+  }
+  @media (min-width: 900px) {
+    .sim-media {
+      grid-column: 1 / span 6;
+    }
+    .sim-copy {
+      grid-column: 8 / -1;
+    }
+  }
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.875rem;
+    width: 100%;
+  }
+  .steps li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.875rem;
+    align-items: start;
+    padding-bottom: 0.875rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .steps li > span:last-child {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .n {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink);
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+</style>
