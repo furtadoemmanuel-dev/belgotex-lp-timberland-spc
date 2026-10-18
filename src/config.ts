@@ -23,7 +23,7 @@ export const config = {
   simulatorUrl: read('SIMULATOR_URL', 'https://www.belgotex.com.br/produtos/pisos-vinilicos-lvt/timberland'),
   privacyUrl: read('PRIVACY_URL', 'https://www.belgotex.com.br/politica-de-privacidade'),
   cookiesUrl: read('COOKIES_URL', 'https://www.belgotex.com.br/politica-de-cookies'),
-  gtmId: read('GTM_ID', ''),
+  gtmId: read('GTM_ID', 'GTM-PB78XKMK'),
   siteUrl: read('SITE_URL', 'https://timberland.belgotex.com.br'),
   /** Versão de aprovação (npm run build:approval): pede aos buscadores para não indexar. */
   noindex: read('NOINDEX', '') === 'true',
