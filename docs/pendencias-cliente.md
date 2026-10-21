@@ -29,3 +29,11 @@ Para o e-mail ao cliente:
 - Seletor: a escolha de cor vem antes do quadro "Os 3 formatos em escala".
 - Mais espaço antes de "Veja de perto".
 - Título "7 padrões de carvalho" mantido (5 no Regular, 2 deles também no XL, e 2 no HB).
+
+## Resolvido pelo site da Belgotex (21/10/2026)
+
+- Caixa do Regular: a ficha do site confirma 11 peças / 2,608 m² (já era o valor da página).
+- Classificação de uso do Regular e do HB na tabela: "32 comercial geral", como na ficha do site.
+  (A ficha do site traz "≤ 2,0 kV" em estabilidade dimensional do Regular/HB, erro de digitação; a tabela mantém "—".)
+- Roomvo: desconsiderado. O botão leva à página do produto, onde o site já carrega o plug-in.
+- Hospedagem, DNS e publicação: com o desenvolvedor do site.

@@ -17,8 +17,8 @@
     [
       "Classificação de uso",
       "ABNT NBR 14917-1 / ISO 10874",
-      "23 residencial pesado · 32 comercial médio",
-      "23 residencial pesado · 32 comercial médio",
+      "23 residencial pesado · 32 comercial geral",
+      "23 residencial pesado · 32 comercial geral",
       "23 residencial pesado · 32 comercial geral"
     ],
     [
@@ -211,6 +211,6 @@
       "Certificado ISO 9001 e 14001"
     ]
   ],
-  "source": "Especificação técnica Timberland, atualizada em 01/10/2026, e especificação técnica Timberland XL, atualizada em 20/10/2026. “—” indica ensaio não informado na ficha daquele formato.",
+  "source": "Especificação técnica Timberland (site da Belgotex, atualizada em 01/10/2026) e especificação técnica Timberland XL (atualizada em 20/10/2026). “—” indica ensaio não informado na ficha daquele formato.",
   "note": "As especificações técnicas dos produtos poderão variar de acordo com as tolerâncias normais do processo de fabricação e/ou pela aplicação de novas tecnologias. Quaisquer variações não afetarão a qualidade e o desempenho de nossos produtos."
 }
