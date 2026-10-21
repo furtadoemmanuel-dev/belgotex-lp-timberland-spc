@@ -72,7 +72,6 @@ const formatLabel = Object.fromEntries(formats.map((f) => [f.id, f.short]));
         capa de uso de {xl.wear} e classificação de uso {xl.useClass}. Disponível em 001 Canyon Oak e 002
         Classic Oak.
       </p>
-      <FormatScale initial={initialFormat} />
 
       <div class="grid-12 sel-body">
         <fieldset class="patterns">
@@ -218,6 +217,7 @@ const formatLabel = Object.fromEntries(formats.map((f) => [f.id, f.short]));
           </div>
         </div>
       </div>
+      <FormatScale initial={initialFormat} />
       <script type="application/json" data-format-labels set:html={JSON.stringify(formatLabel)} />
     </div>
   </div>

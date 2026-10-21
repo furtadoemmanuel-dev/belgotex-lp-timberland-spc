@@ -1,5 +1,5 @@
 [
-  { "id": "garantia-lifetime", "label": "Garantia Lifetime (residencial)", "hero": true, "group": "garantia", "text": "Garantia vitalícia limitada para uso residencial, contra defeitos latentes de fabricação." },
+  { "id": "garantia-lifetime", "label": "Garantia Lifetime (residencial)", "hero": true, "group": "garantia", "text": "Garantia vitalícia limitada ao uso residencial, contra defeitos latentes de fabricação." },
   { "id": "waterproof", "label": "100% Waterproof", "hero": true, "group": "desempenho", "text": "Núcleo SPC à prova d'água: a umidade do dia a dia não estraga o piso." },
   { "id": "floorscore", "label": "FloorScore", "hero": true, "group": "certificacoes", "text": "Baixa emissão de compostos orgânicos voláteis, para um ar interno de qualidade." },
   { "id": "iso-9001", "label": "Empresa certificada ISO 9001", "hero": false, "group": "certificacoes", "text": "Sistema de gestão da qualidade da Belgotex certificado." },

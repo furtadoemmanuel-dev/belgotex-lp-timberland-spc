@@ -19,3 +19,13 @@ Para o e-mail ao cliente:
   SPC e gostaria de falar com um consultor." (seguida do padrão, do formato e do código da campanha).
 - **Roomvo**: liberar o subdomínio e informar os SKUs dos padrões (`docs/roomvo.md`).
 - Cotação: decidido, vai para a página do Timberland no site (`QUOTE_URL`).
+
+## Versão 03 (21/10/2026), correções do PDF do cliente
+
+- Resolvido: **ficha do XL** aplicada a partir de "Especificação Técnica Timberland XL" (atualizada em 20/10/2026):
+  uso 23 · 32 (comercial geral), peso, embalagem 5 peças / 2,118 m², tratamento, ensaios, Δ 19 dB, GREENGUARD Gold.
+  O marcador `[[PENDENTE]]` saiu da página. "Produto importado: China" ficou de fora (decisão do Emmanuel).
+- Garantia: "limitada ao uso residencial" (antes "para uso residencial"), em todos os textos.
+- Seletor: a escolha de cor vem antes do quadro "Os 3 formatos em escala".
+- Mais espaço antes de "Veja de perto".
+- Título "7 padrões de carvalho" mantido (5 no Regular, 2 deles também no XL, e 2 no HB).
